@@ -48,7 +48,7 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-        .dice:hover {
+        .dice:hover:not(.cursor-not-allowed) { /* Modifikasi: Hover hanya jika tidak dinonaktifkan */
             transform: scale(1.1);
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
@@ -283,82 +283,87 @@
 
         const questionSquares = [8, 15, 22, 29, 36, 43, 50, 57, 64, 71, 78, 85, 92];
 
-        // Computer science questions (UPDATED based on "Jelajahi Dunia Informatika.pdf")
+        // Computer science questions (UPDATED and VARIED based on "Jelajahi Dunia Informatika.pdf")
         const questions = [
+            // Topik 1: Informatika & Profesi Masa Depan
             {
-                question: "Menurut materi, Informatika bukan hanya tentang 'coding', tetapi juga tentang bagaimana domain menggiatkan...?",
-                options: ["Pengolahan data", "Teknologi digital", "Tanding", "Perangkat keras"],
-                correct: 2 // Merujuk pada teks 'lentang bagaimana dormen menggiatan tending.'
+                question: "Menurut grafik 'Permintaan Talenta Digital', bidang profesi apa yang memiliki persentase Proyeksi (biru) paling tinggi?",
+                options: ["Programmer/Pengembang Perangkat Lunak", "Pengolah Data", "Spesialis Jaringan", "Analisis Data"],
+                correct: 3 
             },
             {
-                question: "Manakah salah satu dari '3 Pertanyaan Kritis Sebelum Berbagi' informasi sebagai Warga Digital yang Cerdas?",
-                options: ["Apakah kecepatan internet memadai?", "Siapa pembuatnya?", "Berapa banyak yang melihatnya?", "Apakah formatnya menarik?"],
-                correct: 1 // Merujuk pada teks 'Slapa pembuatnya?'
+                question: "Profesi yang sangat terdampak dan terus didorong pesat oleh Artificial Intelligence (AI) menurut materi adalah...",
+                options: ["Pengembang Web", "Pekerja Pabrik Tradisional", "Profesi yang Bertiagal", "Guru Sejarah"],
+                correct: 2 // Merujuk pada teks 'Manthaniya pintu bertiagal profes yang pasting dicansse cepan, surustang Artificial'
             },
-            {
-                question: "Apa tujuan utama dari 'Jurus Jitu Pencarian Google' dalam materi?",
-                options: ["Mencari gambar", "Meningkatkan kecepatan unduh", "Mendapatkan pekerjaan marjad lebih", "Menghilangkan iklan pop-up"],
-                correct: 2 // Merujuk pada teks 'akan menda pekerjaan marjad lebih'
-            },
-            {
-                question: "Salah satu langkah dalam 'Teknik Verifikasi Terbaik: Membaca Lateral' adalah...",
-                options: ["Tutup tab lain", "Hafalkan informasinya", "Selidiki Sumbernya", "Bagikan segera ke grup"],
-                correct: 2 // Merujuk pada teks 'Sellelik Sumbernya'
-            },
-            {
-                question: "Menurut Glosarium, 'Hoaks' adalah...",
-                options: ["Berita benar yang viral", "Berita atau informasi palsu yang dimuat seolah-olah benar", "Konten video lucu", "Pencarian kata kunci"],
-                correct: 1 // Merujuk pada teks 'Berita atau informasi palsu yang dimuat seolah-olah benar, berupa teks(kreatif), video(kreatif), gambar (kreatif)'
-            },
-            {
-                question: "Dalam 'Jurus Jitu Pencarian Google', teknik apa yang bisa digunakan untuk membatasi hasil pencarian?",
-                options: ["Pencarian Tepat", "Pencarian Kilat", "Pencarian Cepat", "Pencarian Tertutup"],
-                correct: 0 // Merujuk pada teks 'Pencarian Tepat', 'Eliminaal Kata', 'Jenis File', 'Spesifik Situs'
-            },
-            {
-                question: "Apa yang harus dilakukan setelah 'Menemukan Informasi' saat menerapkan Teknik Membaca Lateral?",
-                options: ["Langsung Baca", "Buka Tab Baru", "Simpan ke drive", "Verifikasi fakta"],
-                correct: 1 // Merujuk pada teks 'Jangan Langang Baca, Buka Tali Ban'
-            },
-            {
-                question: "Manakah yang merupakan salah satu '3 Pertanyaan Kritis Sebelum Berbagi'?",
-                options: ["Siapa pengikutnya?", "Apa tujuannya?", "Berapa biayanya?", "Kapan diunggah?"],
-                correct: 1 // Merujuk pada teks 'Apa tujuannya?'
-            },
-            {
-                question: "Menurut materi, profesi 'pasting dicansse cepan' terkait erat dengan teknologi yang terus berkembang pesat, yaitu...",
-                options: ["Internet of Things", "Virtual Reality", "Artificial Intelligence", "Big Data"],
-                correct: 2 // Merujuk pada teks 'surustang Artificial ince Att yang tarutersundang pesat'
-            },
+            // Topik 2: Warga Digital Cerdas & Bertanggung Jawab
             {
                 question: "Istilah dalam Glosarium yang merujuk pada 'Aksi atau aturan perilaku yang baik dalam dunia maya' adalah...",
                 options: ["Membaca Lateral", "Ekosistem Periksa Fakta", "Etika Digital", "Hoaks"],
-                correct: 2 // Merujuk pada teks 'Etika Digital'
+                correct: 2 // Etika Digital
             },
             {
-                question: "Setelah melakukan 4 langkah verifikasi (Temukan Info, Buka Tab Baru, Selidiki Sumber, Cari Konfirmasi), langkah terakhir dalam Membaca Lateral adalah...",
-                options: ["Bagikan ke teman", "Buat Keputusan", "Ubah sumbernya", "Lupakan informasinya"],
-                correct: 1 // Merujuk pada teks 'Buat Keputus'
+                question: "Manakah yang BUKAN salah satu dari '3 Pertanyaan Kritis Sebelum Berbagi' informasi?",
+                options: ["Apakah kecepatan internet memadai?", "Apa tujuannya?", "Apakah didukung fakta?", "Siapa pembuatnya?"],
+                correct: 0 // Pertanyaan ttg kecepatan internet BUKAN bagian dari 3 pertanyaan kritis.
             },
             {
-                question: "Dalam Pencarian Google, 'Jenis File' bertujuan untuk:",
-                options: ["Membatasi topik", "Mencari file berdasarkan format tertentu", "Menghapus kata-kata tertentu", "Mencari di situs tertentu"],
-                correct: 1 // Merujuk pada 'Jenis File' di Jurus Jitu Pencarian Google
+                question: "Apa definisi 'Hoaks' menurut Glosarium?",
+                options: ["Berita benar yang viral dan populer", "Berita atau informasi palsu yang dimuat seolah-olah benar", "Situs yang memuat data statistik", "Karya intelektual yang dilindungi"],
+                correct: 1 // Hoaks
+            },
+            // Topik 3: Menguasai Alat Digital Sehari-hari (Pencarian Google)
+            {
+                question: "Untuk membatasi hasil pencarian hanya pada domain tertentu (misal: hanya di situs 'kemdikbud.go.id'), Jurus Jitu Pencarian Google apa yang digunakan?",
+                options: ["Eliminasi Kata", "Pencarian Tepat", "Jenis File", "Spesifik Situs"],
+                correct: 3 // Spesifik Situs
             },
             {
-                question: "Manakah yang termasuk dalam 'Jebakan Informasi' yang harus diwaspadai oleh Warga Digital?",
-                options: ["Berita netral", "Berita fakta", "Informasi yang membuat marah", "Laporan resmi"],
-                correct: 2 // Implisit dari konteks 'Waspada Jebakan Informasi' yang bertujuan memancing emosi.
+                question: "Teknik dalam Pencarian Google yang bertujuan untuk mencari file berdasarkan formatnya (misal: .pdf atau .docx) adalah...",
+                options: ["Pencarian Tepat", "Jenis File", "Eliminasi Kata", "Konfirmasi Sumber"],
+                correct: 1 // Jenis File
             },
             {
-                question: "Teknik verifikasi yang melibatkan 'membuka tab baru dan mencari tahu tentang website atau topik dari berbagai sumber lain' disebut...",
+                question: "Apa manfaat dari menguasai 'Jurus Jitu Pencarian Google' seperti yang disebutkan dalam materi?",
+                options: ["Mempercepat koneksi internet", "Mendapatkan pekerjaan marjad lebih", "Menghapus iklan pop-up", "Mendapatkan jawaban langsung"],
+                correct: 1 // Merujuk pada teks 'akan menda pekerjaan marjad lebih'
+            },
+            // Topik 4: Teknik Verifikasi Terbaik (Membaca Lateral)
+            {
+                question: "Apa nama teknik verifikasi terbaik yang melibatkan 'membuka tab baru dan mencari tahu tentang website atau topik dari berbagai sumber lain'?",
                 options: ["Membaca Cepat", "Membaca Intensif", "Membaca Lateral", "Membaca Ekstensif"],
-                correct: 2 // Merujuk pada Glosarium: 'Membaca Lateral'
+                correct: 2 // Membaca Lateral
             },
             {
-                question: "Panduan keterampilan digital ini ditujukan untuk Siswa Kelas...",
-                options: ["VIII SMP", "IX SMP", "X SMK", "XII SMA"],
-                correct: 2 // Merujuk pada teks 'Panduan Keterampilan Digital Esensial untuk Siswa Kelas X SMK'
+                question: "Setelah 'Temukan Informasi' dalam langkah Membaca Lateral, langkah apa yang HARUS segera dilakukan?",
+                options: ["Bagikan ke teman", "Jangan Langsung Baca, Buka Tab Baru", "Buat Keputusan", "Selidiki Sumbernya"],
+                correct: 1 // Jangan Langsung Baca, Buka Tali Ban
+            },
+            {
+                question: "Manakah langkah ketiga dalam Teknik Membaca Lateral?",
+                options: ["Temukan Informasi", "Cari Konfirmasi dari Sumber Lain", "Selidiki Sumbernya", "Buat Keputusan"],
+                correct: 2 // Selidiki Sumbernya
+            },
+            {
+                question: "Langkah terakhir dalam Teknik Membaca Lateral adalah...",
+                options: ["Cari Konfirmasi", "Selidiki Sumber", "Buat Keputusan", "Temukan Informasi"],
+                correct: 2 // Buat Keputusan
+            },
+            // Pertanyaan Varian / Umum
+            {
+                question: "Apa arti dari 'Ekosistem Periksa Fakta' (Fact-Checking Ecosystem) di Glosarium?",
+                options: ["Komunitas pembuat berita", "Layanan verifikasi kebenaran informasi", "Platform berbagi video", "Sekumpulan pakar IT"],
+                correct: 1 // Merujuk pada Glosarium: 'Ekosistem Periksa Fakta'
+            },
+            {
+                question: "Mengapa Siswa Kelas X SMK perlu mempelajari keterampilan Digital Esensial ini?",
+                options: ["Untuk mempercepat koneksi Wi-Fi", "Sebagai panduan dalam menjadi Talenta Digital Masa Depan", "Agar bisa memenangkan permainan Ular Tangga", "Untuk membuat video yang viral"],
+                correct: 1 // Merujuk pada judul: 'Panduan Keterampilan Digital Esensial untuk Siswa Kelas X SMK'
+            },
+            {
+                question: "Menurut '3 Pertanyaan Kritis Sebelum Berbagi', apa yang dimaksud dengan memeriksa 'Tujuan' (tujuannya)?",
+                options: ["Memastikan apakah informasi bertujuan untuk menghibur", "Memastikan apakah informasi tersebut didukung oleh banyak orang", "Memahami niat pembuat konten (misal: apakah untuk edukasi, memancing emosi, atau iklan)", "Mengetahui kapan konten itu dibuat"],
+                correct: 2 // Memahami niat pembuat konten.
             }
         ];
 
@@ -679,6 +684,11 @@
                 optionsContainer.appendChild(button);
             });
 
+            // LOGIKA BARU: Menonaktifkan tombol dadu saat modal pertanyaan muncul
+            const diceElement = document.getElementById('dice');
+            diceElement.style.pointerEvents = 'none';
+            diceElement.classList.add('opacity-50', 'cursor-not-allowed');
+
             document.getElementById('questionModal').classList.remove('hidden');
             gameState.currentQuestion = question;
         }
@@ -692,17 +702,23 @@
                 showNotification('Pilih jawaban terlebih dahulu!', 'wrong');
                 return;
             }
+
+            const diceElement = document.getElementById('dice');
             
             const correct = selectedIndex === gameState.currentQuestion.correct;
             
             document.getElementById('questionModal').classList.add('hidden');
             
+            // LOGIKA BARU: Mengaktifkan kembali tombol dadu setelah menjawab
+            diceElement.style.pointerEvents = 'auto';
+            diceElement.classList.remove('opacity-50', 'cursor-not-allowed');
+
             if (correct) {
                 const player = gameState.players[gameState.currentPlayerIndex];
                 player.points += 10;
                 showNotification(`Jawaban benar! ${player.name} dapat +10 poin! Lempar dadu lagi!`, 'correct');
                 updatePlayerStatus();
-                return; // Don't change turn
+                return; // Don't change turn, player rolls again
             } else {
                 const player = gameState.players[gameState.currentPlayerIndex];
                 player.points = Math.max(0, player.points - 2);
@@ -831,5 +847,5 @@
         // Initialize the game
         initLogin();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9831d08540b040ea',t:'MTc1ODU0NDIzNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
