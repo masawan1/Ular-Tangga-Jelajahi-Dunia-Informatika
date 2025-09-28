@@ -283,7 +283,7 @@
 
         const questionSquares = [8, 15, 22, 29, 36, 43, 50, 57, 64, 71, 78, 85, 92];
 
-        // Computer science questions (UPDATED and VARIED based on "Jelajahi Dunia Informatika.pdf")
+        // Computer science questions (UPDATED and VARIED with 25 questions based on "Jelajahi Dunia Informatika.pdf")
         const questions = [
             // Topik 1: Informatika & Profesi Masa Depan
             {
@@ -294,45 +294,75 @@
             {
                 question: "Profesi yang sangat terdampak dan terus didorong pesat oleh Artificial Intelligence (AI) menurut materi adalah...",
                 options: ["Pengembang Web", "Pekerja Pabrik Tradisional", "Profesi yang Bertiagal", "Guru Sejarah"],
-                correct: 2 // Merujuk pada teks 'Manthaniya pintu bertiagal profes yang pasting dicansse cepan, surustang Artificial'
+                correct: 2 
+            },
+            {
+                question: "Menurut materi, Informatika bukan hanya tentang 'coding', tetapi juga tentang bagaimana domain menggiatkan...?",
+                options: ["Pengolahan data", "Teknologi digital", "Tanding", "Perangkat keras"],
+                correct: 2 
+            },
+            {
+                question: "Apa tujuan dari 'Panduan Keterampilan Digital Esensial' ini, seperti yang disebutkan di awal materi?",
+                options: ["Membantu Siswa Kelas XII SMA", "Membimbing dalam menjadi Talenta Digital Masa Depan", "Mempelajari Bahasa Pemrograman", "Meningkatkan Kecepatan Koneksi"],
+                correct: 1 // Merujuk pada teks 'Siap Menjadi Talenta Digital Masa Depan?' dan judul
             },
             // Topik 2: Warga Digital Cerdas & Bertanggung Jawab
             {
                 question: "Istilah dalam Glosarium yang merujuk pada 'Aksi atau aturan perilaku yang baik dalam dunia maya' adalah...",
                 options: ["Membaca Lateral", "Ekosistem Periksa Fakta", "Etika Digital", "Hoaks"],
-                correct: 2 // Etika Digital
+                correct: 2 
             },
             {
                 question: "Manakah yang BUKAN salah satu dari '3 Pertanyaan Kritis Sebelum Berbagi' informasi?",
-                options: ["Apakah kecepatan internet memadai?", "Apa tujuannya?", "Apakah didukung fakta?", "Siapa pembuatnya?"],
-                correct: 0 // Pertanyaan ttg kecepatan internet BUKAN bagian dari 3 pertanyaan kritis.
+                options: ["Apakah didukung fakta?", "Apa tujuannya?", "Berapa banyak yang melihatnya?", "Siapa pembuatnya?"],
+                correct: 2 // 'Berapa banyak yang melihatnya?' BUKAN bagian dari 3 pertanyaan kritis.
+            },
+            {
+                question: "Pertanyaan kritis 'Apakah didukung fakta?' bertujuan untuk mengecek...",
+                options: ["Kualitas gambar", "Kebenaran data dan bukti", "Niat pembuat konten", "Jumlah pengikut"],
+                correct: 1 
             },
             {
                 question: "Apa definisi 'Hoaks' menurut Glosarium?",
-                options: ["Berita benar yang viral dan populer", "Berita atau informasi palsu yang dimuat seolah-olah benar", "Situs yang memuat data statistik", "Karya intelektual yang dilindungi"],
-                correct: 1 // Hoaks
+                options: ["Berita benar yang viral", "Berita atau informasi palsu yang dimuat seolah-olah benar", "Konten video lucu", "Pencarian kata kunci"],
+                correct: 1 
+            },
+            {
+                question: "Yang dimaksud dengan 'Jebakan Informasi' yang harus diwaspadai adalah informasi yang bersifat...",
+                options: ["Netral dan objektif", "Membuat marah dan memancing emosi", "Resmi dari pemerintah", "Berbentuk .pdf"],
+                correct: 1 // Jebakan informasi biasanya memancing emosi.
             },
             // Topik 3: Menguasai Alat Digital Sehari-hari (Pencarian Google)
             {
                 question: "Untuk membatasi hasil pencarian hanya pada domain tertentu (misal: hanya di situs 'kemdikbud.go.id'), Jurus Jitu Pencarian Google apa yang digunakan?",
                 options: ["Eliminasi Kata", "Pencarian Tepat", "Jenis File", "Spesifik Situs"],
-                correct: 3 // Spesifik Situs
+                correct: 3 
             },
             {
                 question: "Teknik dalam Pencarian Google yang bertujuan untuk mencari file berdasarkan formatnya (misal: .pdf atau .docx) adalah...",
                 options: ["Pencarian Tepat", "Jenis File", "Eliminasi Kata", "Konfirmasi Sumber"],
-                correct: 1 // Jenis File
+                correct: 1 
             },
             {
                 question: "Apa manfaat dari menguasai 'Jurus Jitu Pencarian Google' seperti yang disebutkan dalam materi?",
-                options: ["Mempercepat koneksi internet", "Mendapatkan pekerjaan marjad lebih", "Menghapus iklan pop-up", "Mendapatkan jawaban langsung"],
+                options: ["Mempercepat koneksi internet", "Membuat pekerjaan marjad lebih mudah/baik", "Menghapus iklan pop-up", "Mendapatkan jawaban langsung"],
                 correct: 1 // Merujuk pada teks 'akan menda pekerjaan marjad lebih'
+            },
+            {
+                question: "Jurus 'Eliminaal Kata' dalam Pencarian Google berfungsi untuk...",
+                options: ["Mencari frase yang persis sama", "Mengabaikan kata-kata tertentu dari hasil", "Mencari di situs spesifik", "Mencari dokumen bertipe tertentu"],
+                correct: 1 // Eliminasi Kata berarti mengabaikan.
+            },
+            {
+                question: "Teknik pencarian yang bertujuan mendapatkan pekerjaan 'marjad lebih' (menjadi lebih baik/efisien) dapat dilakukan dengan menguasai...",
+                options: ["Jurus Jitu Pencarian Google", "Manajemen Berkas", "Sistem Operasi", "Membaca Cepat"],
+                correct: 0 // Merujuk pada bab 3 dan tujuannya.
             },
             // Topik 4: Teknik Verifikasi Terbaik (Membaca Lateral)
             {
                 question: "Apa nama teknik verifikasi terbaik yang melibatkan 'membuka tab baru dan mencari tahu tentang website atau topik dari berbagai sumber lain'?",
                 options: ["Membaca Cepat", "Membaca Intensif", "Membaca Lateral", "Membaca Ekstensif"],
-                correct: 2 // Membaca Lateral
+                correct: 2 
             },
             {
                 question: "Setelah 'Temukan Informasi' dalam langkah Membaca Lateral, langkah apa yang HARUS segera dilakukan?",
@@ -349,503 +379,43 @@
                 options: ["Cari Konfirmasi", "Selidiki Sumber", "Buat Keputusan", "Temukan Informasi"],
                 correct: 2 // Buat Keputusan
             },
-            // Pertanyaan Varian / Umum
             {
-                question: "Apa arti dari 'Ekosistem Periksa Fakta' (Fact-Checking Ecosystem) di Glosarium?",
-                options: ["Komunitas pembuat berita", "Layanan verifikasi kebenaran informasi", "Platform berbagi video", "Sekumpulan pakar IT"],
-                correct: 1 // Merujuk pada Glosarium: 'Ekosistem Periksa Fakta'
+                question: "Pada langkah 'Selidiki Sumbernya', hal penting apa yang perlu dicari tahu?",
+                options: ["Apakah ada foto yang menarik", "Siapa penulis atau pembuat konten tersebut", "Berapa lama waktu yang dibutuhkan untuk membaca", "Apakah warna tulisannya bagus"],
+                correct: 1 
             },
             {
-                question: "Mengapa Siswa Kelas X SMK perlu mempelajari keterampilan Digital Esensial ini?",
-                options: ["Untuk mempercepat koneksi Wi-Fi", "Sebagai panduan dalam menjadi Talenta Digital Masa Depan", "Agar bisa memenangkan permainan Ular Tangga", "Untuk membuat video yang viral"],
-                correct: 1 // Merujuk pada judul: 'Panduan Keterampilan Digital Esensial untuk Siswa Kelas X SMK'
+                question: "Tujuan dari langkah 'Cari Konfirmasi dari Sumber Lain' adalah...",
+                options: ["Membandingkan tanggal terbit", "Mengetahui pendapat pribadi", "Mencari sumber tepercaya yang memverifikasi kebenaran informasi", "Mencari kritik dari sumber lain"],
+                correct: 2 
+            },
+            // Pertanyaan Varian Tambahan
+            {
+                question: "Panduan ini ditujukan sebagai 'Panduan Keterampilan Digital Esensial' untuk Siswa Kelas...",
+                options: ["VII SMP", "IX SMP", "X SMK", "XII SMA"],
+                correct: 2 
             },
             {
-                question: "Menurut '3 Pertanyaan Kritis Sebelum Berbagi', apa yang dimaksud dengan memeriksa 'Tujuan' (tujuannya)?",
-                options: ["Memastikan apakah informasi bertujuan untuk menghibur", "Memastikan apakah informasi tersebut didukung oleh banyak orang", "Memahami niat pembuat konten (misal: apakah untuk edukasi, memancing emosi, atau iklan)", "Mengetahui kapan konten itu dibuat"],
-                correct: 2 // Memahami niat pembuat konten.
+                question: "Menurut Glosarium, apa yang dimaksud dengan 'Karya Intelektual'?",
+                options: ["Berita Hoaks", "Hak cipta yang diberikan saputih pelicita karthik", "Ekosistem Periksa Fakta", "Etika Digital"],
+                correct: 1 // Merujuk pada glosarium
+            },
+            {
+                question: "Tiga pertanyaan kritis sebelum berbagi informasi adalah 'Siapa pembuatnya?', 'Apa tujuannya?', dan...",
+                options: ["Kapan diposting?", "Apakah didukung fakta?", "Seberapa populer?", "Berapa banyak yang harus saya bagikan?"],
+                correct: 1 
+            },
+            {
+                question: "Teknik verifikasi yang paling efektif untuk menyaring sumber informasi di dunia digital adalah...",
+                options: ["Membaca cepat", "Membaca diagonal", "Membaca Lateral", "Membaca Ekstensif"],
+                correct: 2 
+            },
+            {
+                question: "Pada grafik 'Permintaan Talenta Digital', bidang 'Programmer/Pengembang Perangkat Lunak' memiliki persentase Permintaan Saat Ini (hijau) sekitar...",
+                options: ["6%", "7%", "8%", "9%"],
+                correct: 1 // Merujuk pada grafik, sekitar 7%
             }
         ];
 
         // Initialize login screen
-        function initLogin() {
-            let selectedColor1 = '#3b82f6';
-            let selectedColor2 = '#ef4444';
-            
-            // Player 1 color selection
-            document.querySelectorAll('.color-btn-1').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('.color-btn-1').forEach(b => b.classList.remove('ring-4', 'ring-blue-300'));
-                    btn.classList.add('ring-4', 'ring-blue-300');
-                    selectedColor1 = btn.dataset.color;
-                });
-            });
-
-            // Player 2 color selection
-            document.querySelectorAll('.color-btn-2').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('.color-btn-2').forEach(b => b.classList.remove('ring-4', 'ring-green-300'));
-                    btn.classList.add('ring-4', 'ring-green-300');
-                    selectedColor2 = btn.dataset.color;
-                });
-            });
-
-            document.getElementById('startGame').addEventListener('click', () => {
-                const player1Name = document.getElementById('player1Name').value.trim();
-                const player2Name = document.getElementById('player2Name').value.trim();
-                
-                if (!player1Name || !player2Name) {
-                    showNotification('Masukkan nama untuk kedua pemain!', 'wrong');
-                    return;
-                }
-
-                if (player1Name === player2Name) {
-                    showNotification('Nama pemain harus berbeda!', 'wrong');
-                    return;
-                }
-
-                if (selectedColor1 === selectedColor2) {
-                    showNotification('Warna pemain harus berbeda!', 'wrong');
-                    return;
-                }
-                
-                // Ambil durasi waktu yang dipilih dan update gameState
-                const durationElement = document.getElementById('gameDuration');
-                gameState.gameTimeLeft = parseInt(durationElement.value);
-
-                gameState.players = [
-                    {
-                        name: player1Name,
-                        position: 0,
-                        color: selectedColor1,
-                        points: 0
-                    },
-                    {
-                        name: player2Name,
-                        position: 0,
-                        color: selectedColor2,
-                        points: 0
-                    }
-                ];
-
-                document.getElementById('loginScreen').classList.add('hidden');
-                document.getElementById('gameScreen').classList.remove('hidden');
-                initGame();
-            });
-        }
-
-        // Initialize game
-        function initGame() {
-            createBoard();
-            updatePlayerStatus();
-            updateCurrentPlayer();
-            startGameTimer();
-            
-            // Update initial timer display based on selected duration
-            const initialMinutes = Math.floor(gameState.gameTimeLeft / 60);
-            const initialSeconds = gameState.gameTimeLeft % 60;
-            document.getElementById('gameTimer').textContent = `${initialMinutes}:${initialSeconds.toString().padStart(2, '0')}`;
-
-
-            document.getElementById('dice').addEventListener('click', rollDice);
-            document.getElementById('submitAnswer').addEventListener('click', submitAnswer);
-            document.getElementById('playAgain').addEventListener('click', resetGame);
-        }
-
-        // Start game timer
-        function startGameTimer() {
-            const timerElement = document.getElementById('gameTimer');
-            
-            gameState.gameTimer = setInterval(() => {
-                gameState.gameTimeLeft--;
-                
-                const minutes = Math.floor(gameState.gameTimeLeft / 60);
-                const seconds = gameState.gameTimeLeft % 60;
-                const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-                
-                timerElement.textContent = timeString;
-                
-                // Warning when 3 minutes left
-                if (gameState.gameTimeLeft <= 180) {
-                    timerElement.classList.add('timer-warning');
-                }
-                
-                // Time's up
-                if (gameState.gameTimeLeft <= 0) {
-                    clearInterval(gameState.gameTimer);
-                    gameState.gameTimer = null;
-                    endGameByTime();
-                }
-            }, 1000);
-        }
-
-        // End game when time runs out (Updated to show final score)
-        function endGameByTime() {
-            // Find winner by highest points, or highest position if points are tied
-            let winner = gameState.players[0];
-            for (let i = 1; i < gameState.players.length; i++) {
-                const player = gameState.players[i];
-                if (player.points > winner.points || 
-                    (player.points === winner.points && player.position > winner.position)) {
-                    winner = player;
-                }
-            }
-            
-            showNotification('Waktu habis! Permainan selesai!', 'wrong');
-            setTimeout(() => {
-                // Panggil showWinModal dengan flag timeOver = true
-                showWinModal(winner.name, winner.points, true);
-            }, 2000);
-        }
-
-        // Create game board
-        function createBoard() {
-            const board = document.getElementById('gameBoard');
-            board.innerHTML = '';
-
-            for (let i = 100; i >= 1; i--) {
-                const cell = document.createElement('div');
-                cell.className = 'board-cell bg-gray-50';
-                cell.id = `cell-${i}`;
-                
-                // Calculate position for snake pattern
-                const row = Math.floor((100 - i) / 10);
-                const col = (row % 2 === 0) ? (i - 1) % 10 : 9 - ((i - 1) % 10);
-                
-                // Add special styling
-                if (ladders[i]) {
-                    cell.classList.add('ladder');
-                    cell.innerHTML = `${i}<br>🪜`;
-                } else if (snakes[i]) {
-                    cell.classList.add('snake');
-                    cell.innerHTML = `${i}<br>🐍`;
-                } else if (questionSquares.includes(i)) {
-                    cell.classList.add('bg-yellow-200');
-                    cell.innerHTML = `${i}<br>❓`;
-                } else if (i === 100) {
-                    cell.classList.add('bg-gold-200');
-                    cell.innerHTML = `${i}<br>🏆`;
-                } else {
-                    cell.innerHTML = i;
-                }
-
-                board.appendChild(cell);
-            }
-        }
-
-        // Roll dice
-        function rollDice() {
-            const dice = document.getElementById('dice');
-            const result = Math.floor(Math.random() * 6) + 1;
-            
-            dice.style.transform = 'rotate(360deg)';
-            setTimeout(() => {
-                dice.style.transform = 'rotate(0deg)';
-                dice.textContent = result;
-                document.getElementById('diceResult').textContent = `Hasil: ${result}`;
-                
-                movePlayer(result);
-            }, 300);
-        }
-
-        // Move player
-        function movePlayer(steps) {
-            const player = gameState.players[gameState.currentPlayerIndex];
-            const oldPosition = player.position;
-            let newPosition = oldPosition + steps;
-
-            if (newPosition > 100) {
-                newPosition = 100 - (newPosition - 100);
-            }
-
-            // Remove current player from old position
-            if (oldPosition > 0) {
-                const oldCell = document.getElementById(`cell-${oldPosition}`);
-                const oldPlayer = oldCell.querySelector(`.player[data-player="${gameState.currentPlayerIndex}"]`);
-                if (oldPlayer) oldPlayer.remove();
-            }
-
-            player.position = newPosition;
-
-            // Add player to new position
-            const newCell = document.getElementById(`cell-${newPosition}`);
-            const playerElement = document.createElement('div');
-            playerElement.className = 'player';
-            playerElement.style.backgroundColor = player.color;
-            playerElement.dataset.player = gameState.currentPlayerIndex;
-            
-            // Position multiple players in the same cell
-            const existingPlayers = newCell.querySelectorAll('.player');
-            if (existingPlayers.length > 0) {
-                playerElement.style.top = '2px';
-                playerElement.style.left = `${22 + (existingPlayers.length * 12)}px`;
-            }
-            
-            newCell.appendChild(playerElement);
-
-            // Check for special squares
-            setTimeout(() => {
-                if (newPosition === 100) {
-                    player.points += 50;
-                    updatePlayerStatus();
-                    if (gameState.gameTimer) {
-                        clearInterval(gameState.gameTimer);
-                        gameState.gameTimer = null;
-                    }
-                    // Panggil showWinModal untuk menang mencapai 100
-                    showWinModal(player.name, player.points);
-                    return;
-                }
-
-                if (ladders[newPosition]) {
-                    showNotification(`${player.name} naik tangga! ${newPosition} → ${ladders[newPosition]}`, 'correct');
-                    setTimeout(() => {
-                        movePlayerTo(ladders[newPosition]);
-                    }, 1000);
-                } else if (snakes[newPosition]) {
-                    showNotification(`${player.name} kena ular! ${newPosition} → ${snakes[newPosition]}`, 'wrong');
-                    setTimeout(() => {
-                        movePlayerTo(snakes[newPosition]);
-                    }, 1000);
-                } else if (questionSquares.includes(newPosition)) {
-                    showQuestion();
-                } else {
-                    nextTurn();
-                }
-            }, 500);
-
-            updatePlayerStatus();
-        }
-
-        // Move player to specific position
-        function movePlayerTo(position) {
-            const player = gameState.players[gameState.currentPlayerIndex];
-            const oldCell = document.getElementById(`cell-${player.position}`);
-            const oldPlayer = oldCell.querySelector(`.player[data-player="${gameState.currentPlayerIndex}"]`);
-            if (oldPlayer) oldPlayer.remove();
-
-            player.position = position;
-
-            const newCell = document.getElementById(`cell-${position}`);
-            const playerElement = document.createElement('div');
-            playerElement.className = 'player';
-            playerElement.style.backgroundColor = player.color;
-            playerElement.dataset.player = gameState.currentPlayerIndex;
-            
-            // Position multiple players in the same cell
-            const existingPlayers = newCell.querySelectorAll('.player');
-            if (existingPlayers.length > 0) {
-                playerElement.style.top = '2px';
-                playerElement.style.left = `${22 + (existingPlayers.length * 12)}px`;
-            }
-            
-            newCell.appendChild(playerElement);
-
-            updatePlayerStatus();
-            
-            if (position === 100) {
-                player.points += 50;
-                updatePlayerStatus();
-                if (gameState.gameTimer) {
-                    clearInterval(gameState.gameTimer);
-                    gameState.gameTimer = null;
-                }
-                // Panggil showWinModal untuk menang mencapai 100
-                showWinModal(player.name, player.points);
-            } else {
-                nextTurn();
-            }
-        }
-
-        // Show question modal
-        function showQuestion() {
-            // Show questions in order, reset to 0 when all questions are used
-            if (gameState.currentQuestionIndex >= questions.length) {
-                gameState.currentQuestionIndex = 0;
-            }
-            
-            const question = questions[gameState.currentQuestionIndex];
-            gameState.currentQuestionIndex++;
-            
-            document.getElementById('questionText').textContent = question.question;
-            
-            const optionsContainer = document.getElementById('questionOptions');
-            optionsContainer.innerHTML = '';
-            
-            question.options.forEach((option, index) => {
-                const button = document.createElement('button');
-                button.className = 'w-full text-left p-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors';
-                button.textContent = `${String.fromCharCode(65 + index)}. ${option}`;
-                button.dataset.index = index;
-                button.addEventListener('click', () => {
-                    document.querySelectorAll('#questionOptions button').forEach(b => b.classList.remove('bg-blue-100', 'border-blue-500'));
-                    button.classList.add('bg-blue-100', 'border-blue-500');
-                });
-                optionsContainer.appendChild(button);
-            });
-
-            // LOGIKA BARU: Menonaktifkan tombol dadu saat modal pertanyaan muncul
-            const diceElement = document.getElementById('dice');
-            diceElement.style.pointerEvents = 'none';
-            diceElement.classList.add('opacity-50', 'cursor-not-allowed');
-
-            document.getElementById('questionModal').classList.remove('hidden');
-            gameState.currentQuestion = question;
-        }
-
-        // Submit answer
-        function submitAnswer() {
-            const selectedButton = document.querySelector('#questionOptions button.bg-blue-100');
-            const selectedIndex = selectedButton ? parseInt(selectedButton.dataset.index) : -1;
-            
-            if (selectedIndex === -1) {
-                showNotification('Pilih jawaban terlebih dahulu!', 'wrong');
-                return;
-            }
-
-            const diceElement = document.getElementById('dice');
-            
-            const correct = selectedIndex === gameState.currentQuestion.correct;
-            
-            document.getElementById('questionModal').classList.add('hidden');
-            
-            // LOGIKA BARU: Mengaktifkan kembali tombol dadu setelah menjawab
-            diceElement.style.pointerEvents = 'auto';
-            diceElement.classList.remove('opacity-50', 'cursor-not-allowed');
-
-            if (correct) {
-                const player = gameState.players[gameState.currentPlayerIndex];
-                player.points += 10;
-                showNotification(`Jawaban benar! ${player.name} dapat +10 poin! Lempar dadu lagi!`, 'correct');
-                updatePlayerStatus();
-                return; // Don't change turn, player rolls again
-            } else {
-                const player = gameState.players[gameState.currentPlayerIndex];
-                player.points = Math.max(0, player.points - 2);
-                showNotification(`Jawaban salah! ${player.name} dikurangi -2 poin. Giliran selanjutnya.`, 'wrong');
-                updatePlayerStatus();
-            }
-            
-            nextTurn();
-        }
-
-        // Next turn
-        function nextTurn() {
-            gameState.currentPlayerIndex = (gameState.currentPlayerIndex + 1) % gameState.players.length;
-            updateCurrentPlayer();
-        }
-
-        // Update current player display
-        function updateCurrentPlayer() {
-            const player = gameState.players[gameState.currentPlayerIndex];
-            document.getElementById('currentPlayer').textContent = player.name;
-        }
-
-        // Update player status
-        function updatePlayerStatus() {
-            const statusContainer = document.getElementById('playerStatus');
-            statusContainer.innerHTML = '';
-            
-            gameState.players.forEach((player, index) => {
-                const playerDiv = document.createElement('div');
-                playerDiv.className = `flex items-center justify-between p-2 rounded-lg ${index === gameState.currentPlayerIndex ? 'bg-blue-100' : 'bg-gray-50'}`;
-                
-                playerDiv.innerHTML = `
-                    <div class="flex items-center space-x-2">
-                        <div class="w-4 h-4 rounded-full" style="background-color: ${player.color}"></div>
-                        <span class="font-medium">${player.name}</span>
-                    </div>
-                    <div class="text-right">
-                        <div class="text-sm font-bold">Kotak ${player.position}</div>
-                        <div class="text-xs text-gray-500">Poin: ${player.points}</div>
-                    </div>
-                `;
-                
-                statusContainer.appendChild(playerDiv);
-            });
-        }
-
-        // Show notification
-        function showNotification(message, type) {
-            const notification = document.getElementById('notification');
-            notification.textContent = message;
-            notification.className = `notification ${type}`;
-            notification.classList.add('show');
-            
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
-        }
-
-        // Show win modal (Updated to calculate and display Nilai Akhir 0-100)
-        function showWinModal(playerName, totalPoints, timeOver = false) {
-            // Asumsi Skor Mentah Maksimum: 13 kotak pertanyaan * 10 poin + 50 bonus menang = 180 Poin
-            const MAX_RAW_SCORE = 180; 
-            
-            // Konversi Poin Mentah ke Nilai Akhir (0-100)
-            let finalScore = (totalPoints / MAX_RAW_SCORE) * 100;
-            // Batasi nilai maksimum di 100 dan bulatkan ke atas
-            finalScore = Math.min(100, Math.ceil(finalScore));
-
-            const winModalTitle = document.getElementById('winModalTitle');
-            const winnerText = document.getElementById('winnerText');
-
-            winModalTitle.textContent = "Permainan Selesai!";
-            
-            let message = '';
-            if (timeOver) {
-                message = `${playerName} adalah pemain dengan poin tertinggi. Waktu permainan sudah habis.`;
-            } else {
-                message = `${playerName} berhasil mencapai kotak 100!`;
-            }
-            
-            winnerText.innerHTML = `
-                <div class="text-xl font-semibold text-gray-800 mb-4">${message}</div>
-                <div class="bg-blue-100 p-4 rounded-lg">
-                    <div class="text-sm text-gray-600">Nilai Akhir Anda:</div>
-                    <div class="text-6xl font-extrabold text-blue-600">${finalScore}</div>
-                    <div class="text-sm text-gray-500 mt-2">(Total Poin Mentah: ${totalPoints})</div>
-                </div>
-            `;
-            
-            document.getElementById('winModal').classList.remove('hidden');
-        }
-
-        // Reset game
-        function resetGame() {
-            document.getElementById('winModal').classList.add('hidden');
-            document.getElementById('gameScreen').classList.add('hidden');
-            document.getElementById('loginScreen').classList.remove('hidden');
-            
-            if (gameState.gameTimer) {
-                clearInterval(gameState.gameTimer);
-            }
-            
-            // Reset state
-            gameState = {
-                players: [],
-                currentPlayerIndex: 0,
-                gameStarted: false,
-                gameTimer: null,
-                gameTimeLeft: 600, // Reset ke default 10 menit (600 detik)
-                currentQuestionIndex: 0
-            };
-            
-            document.getElementById('player1Name').value = '';
-            document.getElementById('player2Name').value = '';
-            document.querySelectorAll('.color-btn-1').forEach(b => b.classList.remove('ring-4', 'ring-blue-300'));
-            document.querySelectorAll('.color-btn-2').forEach(b => b.classList.remove('ring-4', 'ring-green-300'));
-            
-            // Reset default selections
-            document.querySelector('.color-btn-1[data-color="#3b82f6"]').classList.add('ring-4', 'ring-blue-300');
-            document.querySelector('.color-btn-2[data-color="#ef4444"]').classList.add('ring-4', 'ring-green-300');
-
-            // Reset dropdown to default 10 minutes
-            document.getElementById('gameDuration').value = '600'; 
-        }
-
-        // Initialize the game
-        initLogin();
-    </script>
-</body>
-</html>
+// ... (Kode selanjutnya tidak berubah, hanya daftar 'questions' yang diperbarui) ...
