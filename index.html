@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ular Tangga: Cara Kerja Komputer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .board-cell {
+            aspect-ratio: 1;
+            border: 2px solid #374151;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            font-weight: bold;
+            font-size: 0.6rem;
+        }
+        .player {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            z-index: 10;
+            border: 2px solid white;
+        }
+        .ladder {
+            background: linear-gradient(45deg, #10b981, #059669);
+            color: white;
+        }
+        .snake {
+            background: linear-gradient(45deg, #ef4444, #dc2626);
+            color: white;
+        }
+        .dice {
+            width: 60px;
+            height: 60px;
+            border: 3px solid #374151;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .dice:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .question-modal {
+            backdrop-filter: blur(4px);
+        }
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 16px;
+            z-index: 100;
+            transform: translateX(400px);
+            transition: all 0.5s ease;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            border: 2px solid;
+        }
+        .notification.show {
+            transform: translateX(0);
+        }
+        .notification.correct {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border-color: #047857;
+        }
+        .notification.wrong {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border-color: #b91c1c;
+        }
+        .timer-warning {
+            animation: pulse 1s infinite;
+            color: #ef4444 !important;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-100 to-purple-100 min-h-screen p-4">
+    <!-- Login Screen -->
+    <div id="loginScreen" class="max-w-md mx-auto">
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <div class="text-center mb-6">
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">🐍 Ular Tangga Informatika 🪜</h1>
+                <p class="text-gray-600">Masuk untuk bermain dan pelajari materi!</p>
+            </div>
+            
+            <div class="space-y-6">
+                <!-- Player 1 -->
+                <div class="border-2 border-blue-200 rounded-lg p-4">
+                    <h3 class="text-lg font-bold text-blue-600 mb-3">Pemain 1</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Masukkan Nama</label>
+                            <input type="text" id="player1Name" placeholder="Nama pemain 1" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Pilih Warna</label>
+                            <div class="flex space-x-2">
+                                <button class="color-btn-1 w-8 h-8 rounded-full bg-red-500 border-2 border-gray-300" data-color="#ef4444"></button>
+                                <button class="color-btn-1 w-8 h-8 rounded-full bg-blue-500 border-2 border-gray-300 ring-4 ring-blue-300" data-color="#3b82f6"></button>
+                                <button class="color-btn-1 w-8 h-8 rounded-full bg-green-500 border-2 border-gray-300" data-color="#10b981"></button>
+                                <button class="color-btn-1 w-8 h-8 rounded-full bg-yellow-500 border-2 border-gray-300" data-color="#f59e0b"></button>
+                                <button class="color-btn-1 w-8 h-8 rounded-full bg-purple-500 border-2 border-gray-300" data-color="#8b5cf6"></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Player 2 -->
+                <div class="border-2 border-green-200 rounded-lg p-4">
+                    <h3 class="text-lg font-bold text-green-600 mb-3">Pemain 2</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Masukkan Nama</label>
+                            <input type="text" id="player2Name" placeholder="Nama pemain 2" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Pilih Warna</label>
+                            <div class="flex space-x-2">
+                                <button class="color-btn-2 w-8 h-8 rounded-full bg-red-500 border-2 border-gray-300 ring-4 ring-green-300" data-color="#ef4444"></button>
+                                <button class="color-btn-2 w-8 h-8 rounded-full bg-blue-500 border-2 border-gray-300" data-color="#3b82f6"></button>
+                                <button class="color-btn-2 w-8 h-8 rounded-full bg-green-500 border-2 border-gray-300" data-color="#10b981"></button>
+                                <button class="color-btn-2 w-8 h-8 rounded-full bg-yellow-500 border-2 border-gray-300" data-color="#f59e0b"></button>
+                                <button class="color-btn-2 w-8 h-8 rounded-full bg-purple-500 border-2 border-gray-300" data-color="#8b5cf6"></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Pilihan Waktu Bermain Baru -->
+                <div class="border-2 border-gray-200 rounded-lg p-4 bg-gray-50">
+                    <label for="gameDuration" class="block text-lg font-bold text-gray-700 mb-3">Pilih Durasi Permainan</label>
+                    <select id="gameDuration" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white">
+                        <option value="60">1 Menit (Mode Cepat)</option>
+                        <option value="180">3 Menit</option>
+                        <option value="300">5 Menit</option>
+                        <option value="450">7.5 Menit</option>
+                        <option value="600" selected>10 Menit (Bawaan)</option>
+                        <option value="900">15 Menit</option>
+                    </select>
+                </div>
+                
+                <button id="startGame" class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                    Mulai Bermain
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="gameScreen" class="hidden max-w-6xl mx-auto">
+        <!-- Header -->
+        <div class="bg-white rounded-xl shadow-lg p-4 mb-4">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-800">🐍 Ular Tangga Informatika 🪜</h1>
+                    <p class="text-gray-600">Pelajari materi Warga Digital, Verifikasi, dan Profesi Masa Depan!</p>
+                </div>
+                <div class="text-right">
+                    <div class="text-sm text-gray-600">Giliran:</div>
+                    <div id="currentPlayer" class="text-lg font-bold text-blue-600">Player 1</div>
+                    <div class="text-sm text-gray-600 mt-2">Waktu tersisa:</div>
+                    <div id="gameTimer" class="text-lg font-bold text-green-600">15:00</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
+            <!-- Game Board -->
+            <div class="lg:col-span-3">
+                <div class="bg-white rounded-xl shadow-lg p-4">
+                    <div id="gameBoard" class="grid grid-cols-10 gap-1 max-w-2xl mx-auto"></div>
+                </div>
+            </div>
+
+            <!-- Game Controls -->
+            <div class="space-y-4">
+                <!-- Dice -->
+                <div class="bg-white rounded-xl shadow-lg p-4">
+                    <h3 class="text-lg font-bold mb-4 text-center">Lempar Dadu</h3>
+                    <div class="flex justify-center">
+                        <div id="dice" class="dice">🎲</div>
+                    </div>
+                    <div id="diceResult" class="text-center mt-2 font-bold text-lg"></div>
+                </div>
+
+                <!-- Player Status -->
+                <div class="bg-white rounded-xl shadow-lg p-4">
+                    <h3 class="text-lg font-bold mb-4">Status Pemain</h3>
+                    <div id="playerStatus" class="space-y-2"></div>
+                </div>
+
+                <!-- Game Rules -->
+                <div class="bg-white rounded-xl shadow-lg p-4">
+                    <h3 class="text-lg font-bold mb-2">Aturan Permainan</h3>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li>🪜 Tangga hijau = naik ke atas</li>
+                        <li>🐍 Ular merah = turun ke bawah</li>
+                        <li>❓ Kotak khusus = jawab pertanyaan</li>
+                        <li>✅ Jawaban benar = +10 poin</li>
+                        <li>❌ Jawaban salah = -2 poin</li>
+                        <li>🏆 Capai kotak 100 = +50 poin bonus!</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Question Modal -->
+    <div id="questionModal" class="hidden fixed inset-0 bg-black bg-opacity-50 question-modal z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6">
+            <div class="text-center mb-4">
+                <h3 class="text-xl font-bold text-gray-800">Pertanyaan Informatika</h3>
+            </div>
+            
+            <div id="questionContent" class="mb-6">
+                <p id="questionText" class="text-gray-700 mb-4"></p>
+                <div id="questionOptions" class="space-y-2"></div>
+            </div>
+            
+            <div class="text-center">
+                <button id="submitAnswer" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                    Jawab
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Win Modal (Updated to show Nilai Akhir) -->
+    <div id="winModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 text-center">
+            <div class="text-6xl mb-4">🏆</div>
+            <h3 id="winModalTitle" class="text-2xl font-bold text-gray-800 mb-2">Selamat!</h3> <!-- Added ID for dynamic update -->
+            <p id="winnerText" class="text-gray-600 mb-6"></p> <!-- Content will be replaced with score details -->
+            <button id="playAgain" class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                Main Lagi
+            </button>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+
+    <script>
+        // Game state
+        let gameState = {
+            players: [],
+            currentPlayerIndex: 0,
+            gameStarted: false,
+            gameTimer: null,
+            gameTimeLeft: 600, // 10 minutes in seconds (Default value)
+            currentQuestionIndex: 0 
+        };
+
+        // Game board configuration
+        const ladders = {
+            4: 14, 9: 31, 17: 37, 20: 38, 28: 84, 40: 59, 51: 67, 63: 81, 71: 91
+        };
+
+        const snakes = {
+            16: 6, 47: 26, 49: 11, 56: 53, 62: 19, 64: 60, 87: 24, 93: 73, 95: 75, 98: 78
+        };
+
+        const questionSquares = [8, 15, 22, 29, 36, 43, 50, 57, 64, 71, 78, 85, 92];
+
+        // Computer science questions (UPDATED based on "Jelajahi Dunia Informatika.pdf")
+        const questions = [
+            {
+                question: "Menurut materi, Informatika bukan hanya tentang 'coding', tetapi juga tentang bagaimana domain menggiatkan...?",
+                options: ["Pengolahan data", "Teknologi digital", "Tanding", "Perangkat keras"],
+                correct: 2 // Merujuk pada teks 'lentang bagaimana dormen menggiatan tending.'
+            },
+            {
+                question: "Manakah salah satu dari '3 Pertanyaan Kritis Sebelum Berbagi' informasi sebagai Warga Digital yang Cerdas?",
+                options: ["Apakah kecepatan internet memadai?", "Siapa pembuatnya?", "Berapa banyak yang melihatnya?", "Apakah formatnya menarik?"],
+                correct: 1 // Merujuk pada teks 'Slapa pembuatnya?'
+            },
+            {
+                question: "Apa tujuan utama dari 'Jurus Jitu Pencarian Google' dalam materi?",
+                options: ["Mencari gambar", "Meningkatkan kecepatan unduh", "Mendapatkan pekerjaan marjad lebih", "Menghilangkan iklan pop-up"],
+                correct: 2 // Merujuk pada teks 'akan menda pekerjaan marjad lebih'
+            },
+            {
+                question: "Salah satu langkah dalam 'Teknik Verifikasi Terbaik: Membaca Lateral' adalah...",
+                options: ["Tutup tab lain", "Hafalkan informasinya", "Selidiki Sumbernya", "Bagikan segera ke grup"],
+                correct: 2 // Merujuk pada teks 'Sellelik Sumbernya'
+            },
+            {
+                question: "Menurut Glosarium, 'Hoaks' adalah...",
+                options: ["Berita benar yang viral", "Berita atau informasi palsu yang dimuat seolah-olah benar", "Konten video lucu", "Pencarian kata kunci"],
+                correct: 1 // Merujuk pada teks 'Berita atau informasi palsu yang dimuat seolah-olah benar, berupa teks(kreatif), video(kreatif), gambar (kreatif)'
+            },
+            {
+                question: "Dalam 'Jurus Jitu Pencarian Google', teknik apa yang bisa digunakan untuk membatasi hasil pencarian?",
+                options: ["Pencarian Tepat", "Pencarian Kilat", "Pencarian Cepat", "Pencarian Tertutup"],
+                correct: 0 // Merujuk pada teks 'Pencarian Tepat', 'Eliminaal Kata', 'Jenis File', 'Spesifik Situs'
+            },
+            {
+                question: "Apa yang harus dilakukan setelah 'Menemukan Informasi' saat menerapkan Teknik Membaca Lateral?",
+                options: ["Langsung Baca", "Buka Tab Baru", "Simpan ke drive", "Verifikasi fakta"],
+                correct: 1 // Merujuk pada teks 'Jangan Langang Baca, Buka Tali Ban'
+            },
+            {
+                question: "Manakah yang merupakan salah satu '3 Pertanyaan Kritis Sebelum Berbagi'?",
+                options: ["Siapa pengikutnya?", "Apa tujuannya?", "Berapa biayanya?", "Kapan diunggah?"],
+                correct: 1 // Merujuk pada teks 'Apa tujuannya?'
+            },
+            {
+                question: "Menurut materi, profesi 'pasting dicansse cepan' terkait erat dengan teknologi yang terus berkembang pesat, yaitu...",
+                options: ["Internet of Things", "Virtual Reality", "Artificial Intelligence", "Big Data"],
+                correct: 2 // Merujuk pada teks 'surustang Artificial ince Att yang tarutersundang pesat'
+            },
+            {
+                question: "Istilah dalam Glosarium yang merujuk pada 'Aksi atau aturan perilaku yang baik dalam dunia maya' adalah...",
+                options: ["Membaca Lateral", "Ekosistem Periksa Fakta", "Etika Digital", "Hoaks"],
+                correct: 2 // Merujuk pada teks 'Etika Digital'
+            },
+            {
+                question: "Setelah melakukan 4 langkah verifikasi (Temukan Info, Buka Tab Baru, Selidiki Sumber, Cari Konfirmasi), langkah terakhir dalam Membaca Lateral adalah...",
+                options: ["Bagikan ke teman", "Buat Keputusan", "Ubah sumbernya", "Lupakan informasinya"],
+                correct: 1 // Merujuk pada teks 'Buat Keputus'
+            },
+            {
+                question: "Dalam Pencarian Google, 'Jenis File' bertujuan untuk:",
+                options: ["Membatasi topik", "Mencari file berdasarkan format tertentu", "Menghapus kata-kata tertentu", "Mencari di situs tertentu"],
+                correct: 1 // Merujuk pada 'Jenis File' di Jurus Jitu Pencarian Google
+            },
+            {
+                question: "Manakah yang termasuk dalam 'Jebakan Informasi' yang harus diwaspadai oleh Warga Digital?",
+                options: ["Berita netral", "Berita fakta", "Informasi yang membuat marah", "Laporan resmi"],
+                correct: 2 // Implisit dari konteks 'Waspada Jebakan Informasi' yang bertujuan memancing emosi.
+            },
+            {
+                question: "Teknik verifikasi yang melibatkan 'membuka tab baru dan mencari tahu tentang website atau topik dari berbagai sumber lain' disebut...",
+                options: ["Membaca Cepat", "Membaca Intensif", "Membaca Lateral", "Membaca Ekstensif"],
+                correct: 2 // Merujuk pada Glosarium: 'Membaca Lateral'
+            },
+            {
+                question: "Panduan keterampilan digital ini ditujukan untuk Siswa Kelas...",
+                options: ["VIII SMP", "IX SMP", "X SMK", "XII SMA"],
+                correct: 2 // Merujuk pada teks 'Panduan Keterampilan Digital Esensial untuk Siswa Kelas X SMK'
+            }
+        ];
+
+        // Initialize login screen
+        function initLogin() {
+            let selectedColor1 = '#3b82f6';
+            let selectedColor2 = '#ef4444';
+            
+            // Player 1 color selection
+            document.querySelectorAll('.color-btn-1').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.color-btn-1').forEach(b => b.classList.remove('ring-4', 'ring-blue-300'));
+                    btn.classList.add('ring-4', 'ring-blue-300');
+                    selectedColor1 = btn.dataset.color;
+                });
+            });
+
+            // Player 2 color selection
+            document.querySelectorAll('.color-btn-2').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.color-btn-2').forEach(b => b.classList.remove('ring-4', 'ring-green-300'));
+                    btn.classList.add('ring-4', 'ring-green-300');
+                    selectedColor2 = btn.dataset.color;
+                });
+            });
+
+            document.getElementById('startGame').addEventListener('click', () => {
+                const player1Name = document.getElementById('player1Name').value.trim();
+                const player2Name = document.getElementById('player2Name').value.trim();
+                
+                if (!player1Name || !player2Name) {
+                    showNotification('Masukkan nama untuk kedua pemain!', 'wrong');
+                    return;
+                }
+
+                if (player1Name === player2Name) {
+                    showNotification('Nama pemain harus berbeda!', 'wrong');
+                    return;
+                }
+
+                if (selectedColor1 === selectedColor2) {
+                    showNotification('Warna pemain harus berbeda!', 'wrong');
+                    return;
+                }
+                
+                // Ambil durasi waktu yang dipilih dan update gameState
+                const durationElement = document.getElementById('gameDuration');
+                gameState.gameTimeLeft = parseInt(durationElement.value);
+
+                gameState.players = [
+                    {
+                        name: player1Name,
+                        position: 0,
+                        color: selectedColor1,
+                        points: 0
+                    },
+                    {
+                        name: player2Name,
+                        position: 0,
+                        color: selectedColor2,
+                        points: 0
+                    }
+                ];
+
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('gameScreen').classList.remove('hidden');
+                initGame();
+            });
+        }
+
+        // Initialize game
+        function initGame() {
+            createBoard();
+            updatePlayerStatus();
+            updateCurrentPlayer();
+            startGameTimer();
+            
+            // Update initial timer display based on selected duration
+            const initialMinutes = Math.floor(gameState.gameTimeLeft / 60);
+            const initialSeconds = gameState.gameTimeLeft % 60;
+            document.getElementById('gameTimer').textContent = `${initialMinutes}:${initialSeconds.toString().padStart(2, '0')}`;
+
+
+            document.getElementById('dice').addEventListener('click', rollDice);
+            document.getElementById('submitAnswer').addEventListener('click', submitAnswer);
+            document.getElementById('playAgain').addEventListener('click', resetGame);
+        }
+
+        // Start game timer
+        function startGameTimer() {
+            const timerElement = document.getElementById('gameTimer');
+            
+            gameState.gameTimer = setInterval(() => {
+                gameState.gameTimeLeft--;
+                
+                const minutes = Math.floor(gameState.gameTimeLeft / 60);
+                const seconds = gameState.gameTimeLeft % 60;
+                const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                
+                timerElement.textContent = timeString;
+                
+                // Warning when 3 minutes left
+                if (gameState.gameTimeLeft <= 180) {
+                    timerElement.classList.add('timer-warning');
+                }
+                
+                // Time's up
+                if (gameState.gameTimeLeft <= 0) {
+                    clearInterval(gameState.gameTimer);
+                    gameState.gameTimer = null;
+                    endGameByTime();
+                }
+            }, 1000);
+        }
+
+        // End game when time runs out (Updated to show final score)
+        function endGameByTime() {
+            // Find winner by highest points, or highest position if points are tied
+            let winner = gameState.players[0];
+            for (let i = 1; i < gameState.players.length; i++) {
+                const player = gameState.players[i];
+                if (player.points > winner.points || 
+                    (player.points === winner.points && player.position > winner.position)) {
+                    winner = player;
+                }
+            }
+            
+            showNotification('Waktu habis! Permainan selesai!', 'wrong');
+            setTimeout(() => {
+                // Panggil showWinModal dengan flag timeOver = true
+                showWinModal(winner.name, winner.points, true);
+            }, 2000);
+        }
+
+        // Create game board
+        function createBoard() {
+            const board = document.getElementById('gameBoard');
+            board.innerHTML = '';
+
+            for (let i = 100; i >= 1; i--) {
+                const cell = document.createElement('div');
+                cell.className = 'board-cell bg-gray-50';
+                cell.id = `cell-${i}`;
+                
+                // Calculate position for snake pattern
+                const row = Math.floor((100 - i) / 10);
+                const col = (row % 2 === 0) ? (i - 1) % 10 : 9 - ((i - 1) % 10);
+                
+                // Add special styling
+                if (ladders[i]) {
+                    cell.classList.add('ladder');
+                    cell.innerHTML = `${i}<br>🪜`;
+                } else if (snakes[i]) {
+                    cell.classList.add('snake');
+                    cell.innerHTML = `${i}<br>🐍`;
+                } else if (questionSquares.includes(i)) {
+                    cell.classList.add('bg-yellow-200');
+                    cell.innerHTML = `${i}<br>❓`;
+                } else if (i === 100) {
+                    cell.classList.add('bg-gold-200');
+                    cell.innerHTML = `${i}<br>🏆`;
+                } else {
+                    cell.innerHTML = i;
+                }
+
+                board.appendChild(cell);
+            }
+        }
+
+        // Roll dice
+        function rollDice() {
+            const dice = document.getElementById('dice');
+            const result = Math.floor(Math.random() * 6) + 1;
+            
+            dice.style.transform = 'rotate(360deg)';
+            setTimeout(() => {
+                dice.style.transform = 'rotate(0deg)';
+                dice.textContent = result;
+                document.getElementById('diceResult').textContent = `Hasil: ${result}`;
+                
+                movePlayer(result);
+            }, 300);
+        }
+
+        // Move player
+        function movePlayer(steps) {
+            const player = gameState.players[gameState.currentPlayerIndex];
+            const oldPosition = player.position;
+            let newPosition = oldPosition + steps;
+
+            if (newPosition > 100) {
+                newPosition = 100 - (newPosition - 100);
+            }
+
+            // Remove current player from old position
+            if (oldPosition > 0) {
+                const oldCell = document.getElementById(`cell-${oldPosition}`);
+                const oldPlayer = oldCell.querySelector(`.player[data-player="${gameState.currentPlayerIndex}"]`);
+                if (oldPlayer) oldPlayer.remove();
+            }
+
+            player.position = newPosition;
+
+            // Add player to new position
+            const newCell = document.getElementById(`cell-${newPosition}`);
+            const playerElement = document.createElement('div');
+            playerElement.className = 'player';
+            playerElement.style.backgroundColor = player.color;
+            playerElement.dataset.player = gameState.currentPlayerIndex;
+            
+            // Position multiple players in the same cell
+            const existingPlayers = newCell.querySelectorAll('.player');
+            if (existingPlayers.length > 0) {
+                playerElement.style.top = '2px';
+                playerElement.style.left = `${22 + (existingPlayers.length * 12)}px`;
+            }
+            
+            newCell.appendChild(playerElement);
+
+            // Check for special squares
+            setTimeout(() => {
+                if (newPosition === 100) {
+                    player.points += 50;
+                    updatePlayerStatus();
+                    if (gameState.gameTimer) {
+                        clearInterval(gameState.gameTimer);
+                        gameState.gameTimer = null;
+                    }
+                    // Panggil showWinModal untuk menang mencapai 100
+                    showWinModal(player.name, player.points);
+                    return;
+                }
+
+                if (ladders[newPosition]) {
+                    showNotification(`${player.name} naik tangga! ${newPosition} → ${ladders[newPosition]}`, 'correct');
+                    setTimeout(() => {
+                        movePlayerTo(ladders[newPosition]);
+                    }, 1000);
+                } else if (snakes[newPosition]) {
+                    showNotification(`${player.name} kena ular! ${newPosition} → ${snakes[newPosition]}`, 'wrong');
+                    setTimeout(() => {
+                        movePlayerTo(snakes[newPosition]);
+                    }, 1000);
+                } else if (questionSquares.includes(newPosition)) {
+                    showQuestion();
+                } else {
+                    nextTurn();
+                }
+            }, 500);
+
+            updatePlayerStatus();
+        }
+
+        // Move player to specific position
+        function movePlayerTo(position) {
+            const player = gameState.players[gameState.currentPlayerIndex];
+            const oldCell = document.getElementById(`cell-${player.position}`);
+            const oldPlayer = oldCell.querySelector(`.player[data-player="${gameState.currentPlayerIndex}"]`);
+            if (oldPlayer) oldPlayer.remove();
+
+            player.position = position;
+
+            const newCell = document.getElementById(`cell-${position}`);
+            const playerElement = document.createElement('div');
+            playerElement.className = 'player';
+            playerElement.style.backgroundColor = player.color;
+            playerElement.dataset.player = gameState.currentPlayerIndex;
+            
+            // Position multiple players in the same cell
+            const existingPlayers = newCell.querySelectorAll('.player');
+            if (existingPlayers.length > 0) {
+                playerElement.style.top = '2px';
+                playerElement.style.left = `${22 + (existingPlayers.length * 12)}px`;
+            }
+            
+            newCell.appendChild(playerElement);
+
+            updatePlayerStatus();
+            
+            if (position === 100) {
+                player.points += 50;
+                updatePlayerStatus();
+                if (gameState.gameTimer) {
+                    clearInterval(gameState.gameTimer);
+                    gameState.gameTimer = null;
+                }
+                // Panggil showWinModal untuk menang mencapai 100
+                showWinModal(player.name, player.points);
+            } else {
+                nextTurn();
+            }
+        }
+
+        // Show question modal
+        function showQuestion() {
+            // Show questions in order, reset to 0 when all questions are used
+            if (gameState.currentQuestionIndex >= questions.length) {
+                gameState.currentQuestionIndex = 0;
+            }
+            
+            const question = questions[gameState.currentQuestionIndex];
+            gameState.currentQuestionIndex++;
+            
+            document.getElementById('questionText').textContent = question.question;
+            
+            const optionsContainer = document.getElementById('questionOptions');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'w-full text-left p-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors';
+                button.textContent = `${String.fromCharCode(65 + index)}. ${option}`;
+                button.dataset.index = index;
+                button.addEventListener('click', () => {
+                    document.querySelectorAll('#questionOptions button').forEach(b => b.classList.remove('bg-blue-100', 'border-blue-500'));
+                    button.classList.add('bg-blue-100', 'border-blue-500');
+                });
+                optionsContainer.appendChild(button);
+            });
+
+            document.getElementById('questionModal').classList.remove('hidden');
+            gameState.currentQuestion = question;
+        }
+
+        // Submit answer
+        function submitAnswer() {
+            const selectedButton = document.querySelector('#questionOptions button.bg-blue-100');
+            const selectedIndex = selectedButton ? parseInt(selectedButton.dataset.index) : -1;
+            
+            if (selectedIndex === -1) {
+                showNotification('Pilih jawaban terlebih dahulu!', 'wrong');
+                return;
+            }
+            
+            const correct = selectedIndex === gameState.currentQuestion.correct;
+            
+            document.getElementById('questionModal').classList.add('hidden');
+            
+            if (correct) {
+                const player = gameState.players[gameState.currentPlayerIndex];
+                player.points += 10;
+                showNotification(`Jawaban benar! ${player.name} dapat +10 poin! Lempar dadu lagi!`, 'correct');
+                updatePlayerStatus();
+                return; // Don't change turn
+            } else {
+                const player = gameState.players[gameState.currentPlayerIndex];
+                player.points = Math.max(0, player.points - 2);
+                showNotification(`Jawaban salah! ${player.name} dikurangi -2 poin. Giliran selanjutnya.`, 'wrong');
+                updatePlayerStatus();
+            }
+            
+            nextTurn();
+        }
+
+        // Next turn
+        function nextTurn() {
+            gameState.currentPlayerIndex = (gameState.currentPlayerIndex + 1) % gameState.players.length;
+            updateCurrentPlayer();
+        }
+
+        // Update current player display
+        function updateCurrentPlayer() {
+            const player = gameState.players[gameState.currentPlayerIndex];
+            document.getElementById('currentPlayer').textContent = player.name;
+        }
+
+        // Update player status
+        function updatePlayerStatus() {
+            const statusContainer = document.getElementById('playerStatus');
+            statusContainer.innerHTML = '';
+            
+            gameState.players.forEach((player, index) => {
+                const playerDiv = document.createElement('div');
+                playerDiv.className = `flex items-center justify-between p-2 rounded-lg ${index === gameState.currentPlayerIndex ? 'bg-blue-100' : 'bg-gray-50'}`;
+                
+                playerDiv.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <div class="w-4 h-4 rounded-full" style="background-color: ${player.color}"></div>
+                        <span class="font-medium">${player.name}</span>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-sm font-bold">Kotak ${player.position}</div>
+                        <div class="text-xs text-gray-500">Poin: ${player.points}</div>
+                    </div>
+                `;
+                
+                statusContainer.appendChild(playerDiv);
+            });
+        }
+
+        // Show notification
+        function showNotification(message, type) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Show win modal (Updated to calculate and display Nilai Akhir 0-100)
+        function showWinModal(playerName, totalPoints, timeOver = false) {
+            // Asumsi Skor Mentah Maksimum: 13 kotak pertanyaan * 10 poin + 50 bonus menang = 180 Poin
+            const MAX_RAW_SCORE = 180; 
+            
+            // Konversi Poin Mentah ke Nilai Akhir (0-100)
+            let finalScore = (totalPoints / MAX_RAW_SCORE) * 100;
+            // Batasi nilai maksimum di 100 dan bulatkan ke atas
+            finalScore = Math.min(100, Math.ceil(finalScore));
+
+            const winModalTitle = document.getElementById('winModalTitle');
+            const winnerText = document.getElementById('winnerText');
+
+            winModalTitle.textContent = "Permainan Selesai!";
+            
+            let message = '';
+            if (timeOver) {
+                message = `${playerName} adalah pemain dengan poin tertinggi. Waktu permainan sudah habis.`;
+            } else {
+                message = `${playerName} berhasil mencapai kotak 100!`;
+            }
+            
+            winnerText.innerHTML = `
+                <div class="text-xl font-semibold text-gray-800 mb-4">${message}</div>
+                <div class="bg-blue-100 p-4 rounded-lg">
+                    <div class="text-sm text-gray-600">Nilai Akhir Anda:</div>
+                    <div class="text-6xl font-extrabold text-blue-600">${finalScore}</div>
+                    <div class="text-sm text-gray-500 mt-2">(Total Poin Mentah: ${totalPoints})</div>
+                </div>
+            `;
+            
+            document.getElementById('winModal').classList.remove('hidden');
+        }
+
+        // Reset game
+        function resetGame() {
+            document.getElementById('winModal').classList.add('hidden');
+            document.getElementById('gameScreen').classList.add('hidden');
+            document.getElementById('loginScreen').classList.remove('hidden');
+            
+            if (gameState.gameTimer) {
+                clearInterval(gameState.gameTimer);
+            }
+            
+            // Reset state
+            gameState = {
+                players: [],
+                currentPlayerIndex: 0,
+                gameStarted: false,
+                gameTimer: null,
+                gameTimeLeft: 600, // Reset ke default 10 menit (600 detik)
+                currentQuestionIndex: 0
+            };
+            
+            document.getElementById('player1Name').value = '';
+            document.getElementById('player2Name').value = '';
+            document.querySelectorAll('.color-btn-1').forEach(b => b.classList.remove('ring-4', 'ring-blue-300'));
+            document.querySelectorAll('.color-btn-2').forEach(b => b.classList.remove('ring-4', 'ring-green-300'));
+            
+            // Reset default selections
+            document.querySelector('.color-btn-1[data-color="#3b82f6"]').classList.add('ring-4', 'ring-blue-300');
+            document.querySelector('.color-btn-2[data-color="#ef4444"]').classList.add('ring-4', 'ring-green-300');
+
+            // Reset dropdown to default 10 minutes
+            document.getElementById('gameDuration').value = '600'; 
+        }
+
+        // Initialize the game
+        initLogin();
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9831d08540b040ea',t:'MTc1ODU0NDIzNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
