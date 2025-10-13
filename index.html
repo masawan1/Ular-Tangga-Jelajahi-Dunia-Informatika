@@ -3,1116 +3,852 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ular Tangga: Cara Kerja Komputer</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Snake Multiplayer</title>
     <style>
-        .board-cell {
-            aspect-ratio: 1;
-            border: 2px solid #374151;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            font-weight: bold;
-            font-size: 0.6rem;
-        }
-        .player {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            z-index: 10;
-            border: 2px solid white;
-        }
-        .ladder {
-            background: linear-gradient(45deg, #10b981, #059669);
+        body {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            text-align: center;
+            height: 100%;
+            overflow: hidden;
         }
-        .snake {
-            background: linear-gradient(45deg, #ef4444, #dc2626);
-            color: white;
+
+        .game-container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 10px;
         }
-        .dice {
-            width: 60px;
-            height: 60px;
-            border: 3px solid #374151;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            font-weight: bold;
-            background: white;
-            cursor: pointer;
-            transition: all 0.3s;
+
+        h1 {
+            margin: 0 0 20px 0;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
-        .dice:hover:not(.cursor-not-allowed) { /* Modifikasi: Hover hanya jika tidak dinonaktifkan */
-            transform: scale(1.1);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        }
-        .question-modal {
-            backdrop-filter: blur(4px);
-        }
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 16px 24px;
-            border-radius: 12px;
-            font-weight: bold;
-            font-size: 16px;
-            z-index: 100;
-            transform: translateX(400px);
-            transition: all 0.5s ease;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-            border: 2px solid;
-        }
-        .notification.show {
-            transform: translateX(0);
-        }
-        .notification.correct {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            border-color: #047857;
-        }
-        .notification.wrong {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            color: white;
-            border-color: #b91c1c;
-        }
-        .timer-warning {
-            animation: pulse 1s infinite;
-            color: #ef4444 !important;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        .score-card {
+
+        .controls-info {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            padding: 12px;
-            margin-bottom: 8px;
-            border-radius: 8px;
-            border: 2px solid #e5e7eb;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
         }
-        .score-card.highlight {
-            border-color: #3b82f6;
-            background-color: #eff6ff;
-            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.1);
+
+        .player-info {
+            background: rgba(255,255,255,0.1);
+            padding: 10px 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .player1 { border-left: 4px solid #ff6b6b; }
+        .player2 { border-left: 4px solid #4ecdc4; }
+
+        .game-board {
+            width: min(90vw, 900px);
+            height: min(60vw, 600px);
+            max-width: 900px;
+            max-height: 600px;
+            background: rgba(0,0,0,0.8);
+            border: 3px solid white;
+            border-radius: 10px;
+            margin: 0 auto 20px auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @media (max-width: 768px) {
+            .game-board {
+                width: 95vw;
+                height: 63vw;
+                max-height: 400px;
+            }
+        }
+
+        .snake-segment {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+        }
+
+        .player1-snake { background: #ff6b6b; }
+        .player2-snake { background: #4ecdc4; }
+
+        .food {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #ffd93d;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #ffd93d;
+        }
+
+        .score-board {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .score {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .game-over {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.9);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            display: none;
+        }
+
+        .restart-btn {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: transform 0.2s;
+        }
+
+        .restart-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .status {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .question-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .question-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .question {
+            font-size: 2rem;
+            margin: 20px 0;
+            font-weight: bold;
+            color: #ffd93d;
+        }
+
+        #answer {
+            width: 200px;
+            padding: 15px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 10px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .question-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .answer-btn, .skip-btn {
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .answer-btn {
+            background: #4ecdc4;
+            color: white;
+        }
+
+        .skip-btn {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .answer-btn:hover, .skip-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .question-timer {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #ffd93d;
+        }
+
+        .options-container {
+            margin: 20px 0;
+        }
+
+        .option-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+        }
+
+        .option-btn:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: #ffd93d;
+            transform: translateY(-2px);
+        }
+
+        .option-btn.selected {
+            background: #4ecdc4;
+            border-color: #4ecdc4;
+        }
+
+        .option-btn.correct {
+            background: #4ecdc4;
+            border-color: #4ecdc4;
+        }
+
+        .option-btn.incorrect {
+            background: #ff6b6b;
+            border-color: #ff6b6b;
+        }
+
+        .control-btn {
+            width: 60px;
+            height: 60px;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            backdrop-filter: blur(10px);
+        }
+
+        .control-btn:active {
+            background: rgba(255,255,255,0.4);
+            transform: scale(0.95);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .controls-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .player-info {
+                font-size: 1rem;
+            }
+            
+            .score {
+                font-size: 1.3rem;
+            }
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-blue-100 to-purple-100 min-h-screen p-4">
-    <!-- Login Screen -->
-    <div id="loginScreen" class="max-w-md mx-auto">
-        <div class="bg-white rounded-xl shadow-lg p-6">
-            <div class="text-center mb-6">
-                <h1 class="text-3xl font-bold text-gray-800 mb-2">🐍 Ular Tangga Informatika 🪜</h1>
-                <p class="text-gray-600">Masuk untuk bermain dan pelajari materi!</p>
+<body>
+    <div class="game-container">
+        <h1>🐍 Snake Game 🐍</h1>
+        
+        <div class="controls-info">
+            <div class="player-info player1" style="margin: 0 auto; max-width: 300px;">
+                <strong>Kontrol</strong><br>
+                Gunakan W A S D atau ← ↑ ↓ → untuk bergerak
             </div>
-            
-            <div class="space-y-6">
-                <!-- Player 1 -->
-                <div class="border-2 border-blue-200 rounded-lg p-4">
-                    <h3 class="text-lg font-bold text-blue-600 mb-3">Pemain 1</h3>
-                    <div class="space-y-3">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Masukkan Nama</label>
-                            <input type="text" id="player1Name" placeholder="Nama pemain 1" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Pilih Warna</label>
-                            <div class="flex space-x-2">
-                                <button class="color-btn-1 w-8 h-8 rounded-full bg-red-500 border-2 border-gray-300" data-color="#ef4444"></button>
-                                <button class="color-btn-1 w-8 h-8 rounded-full bg-blue-500 border-2 border-gray-300 ring-4 ring-blue-300" data-color="#3b82f6"></button>
-                                <button class="color-btn-1 w-8 h-8 rounded-full bg-green-500 border-2 border-gray-300" data-color="#10b981"></button>
-                                <button class="color-btn-1 w-8 h-8 rounded-full bg-yellow-500 border-2 border-gray-300" data-color="#f59e0b"></button>
-                                <button class="color-btn-1 w-8 h-8 rounded-full bg-purple-500 border-2 border-gray-300" data-color="#8b5cf6"></button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        </div>
 
-                <!-- Player 2 -->
-                <div class="border-2 border-green-200 rounded-lg p-4">
-                    <h3 class="text-lg font-bold text-green-600 mb-3">Pemain 2</h3>
-                    <div class="space-y-3">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Masukkan Nama</label>
-                            <input type="text" id="player2Name" placeholder="Nama pemain 2" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Pilih Warna</label>
-                            <div class="flex space-x-2">
-                                <button class="color-btn-2 w-8 h-8 rounded-full bg-red-500 border-2 border-gray-300 ring-4 ring-green-300" data-color="#ef4444"></button>
-                                <button class="color-btn-2 w-8 h-8 rounded-full bg-blue-500 border-2 border-gray-300" data-color="#3b82f6"></button>
-                                <button class="color-btn-2 w-8 h-8 rounded-full bg-green-500 border-2 border-gray-300" data-color="#10b981"></button>
-                                <button class="color-btn-2 w-8 h-8 rounded-full bg-yellow-500 border-2 border-gray-300" data-color="#f59e0b"></button>
-                                <button class="color-btn-2 w-8 h-8 rounded-full bg-purple-500 border-2 border-gray-300" data-color="#8b5cf6"></button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Pilihan Waktu Bermain Baru -->
-                <div class="border-2 border-gray-200 rounded-lg p-4 bg-gray-50">
-                    <label for="gameDuration" class="block text-lg font-bold text-gray-700 mb-3">Pilih Durasi Permainan</label>
-                    <select id="gameDuration" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white">
-                        <option value="60">1 Menit (Mode Cepat)</option>
-                        <option value="180">3 Menit</option>
-                        <option value="300">5 Menit</option>
-                        <option value="450">7.5 Menit</option>
-                        <option value="600" selected>10 Menit (Bawaan)</option>
-                        <option value="900">15 Menit</option>
-                    </select>
-                </div>
-                
-                <button id="startGame" class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
-                    Mulai Bermain
-                </button>
+        <div class="score-board">
+            <div class="score" style="text-align: center; width: 100%;">Skor: <span id="score">0</span></div>
+        </div>
+
+        <div class="game-board" id="gameBoard">
+            <div class="game-over" id="gameOver">
+                <div class="status" id="gameStatus"></div>
+                <button class="restart-btn" onclick="startGame()">Main Lagi</button>
             </div>
+        </div>
+
+        <div class="question-modal" id="questionModal">
+            <div class="question-content">
+                <h3>🔍 Soal Mesin Pencari!</h3>
+                <div class="question" id="question"></div>
+                <div class="options-container" id="optionsContainer">
+                    <!-- Options will be generated here -->
+                </div>
+                <div class="question-buttons">
+                    <button class="skip-btn" onclick="skipQuestion()">Lewati (-5 poin)</button>
+                </div>
+                <div class="question-timer">Waktu: <span id="timer">15</span>s</div>
+            </div>
+        </div>
+
+        <div class="mobile-controls" id="mobileControls" style="display: none; margin: 20px 0;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; max-width: 200px; margin: 0 auto;">
+                <div></div>
+                <button class="control-btn" data-direction="up">↑</button>
+                <div></div>
+                <button class="control-btn" data-direction="left">←</button>
+                <div></div>
+                <button class="control-btn" data-direction="right">→</button>
+                <div></div>
+                <button class="control-btn" data-direction="down">↓</button>
+                <div></div>
+            </div>
+        </div>
+
+        <div style="margin-top: 20px; font-size: 1.1rem;">
+            <p>🎯 Makan makanan kuning dan jawab soal mesin pencari untuk dapat poin!</p>
+            <p>⚠️ Jangan tabrak dinding atau diri sendiri!</p>
+            <p>🔍 Jawab soal dengan benar: +10 poin | Salah: -2 poin | Lewati: -5 poin</p>
         </div>
     </div>
-
-    <!-- Game Screen -->
-    <div id="gameScreen" class="hidden max-w-6xl mx-auto">
-        <!-- Header -->
-        <div class="bg-white rounded-xl shadow-lg p-4 mb-4">
-            <div class="flex justify-between items-center">
-                <div>
-                    <h1 class="text-2xl font-bold text-gray-800">🐍 Ular Tangga Informatika 🪜</h1>
-                    <p class="text-gray-600">Pelajari materi Warga Digital, Verifikasi, dan Profesi Masa Depan!</p>
-                </div>
-                <div class="text-right">
-                    <div class="text-sm text-gray-600">Giliran:</div>
-                    <div id="currentPlayer" class="text-lg font-bold text-blue-600">Player 1</div>
-                    <div class="text-sm text-gray-600 mt-2">Waktu tersisa:</div>
-                    <div id="gameTimer" class="text-lg font-bold text-green-600">15:00</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
-            <!-- Game Board -->
-            <div class="lg:col-span-3">
-                <div class="bg-white rounded-xl shadow-lg p-4">
-                    <div id="gameBoard" class="grid grid-cols-10 gap-1 max-w-2xl mx-auto"></div>
-                </div>
-            </div>
-
-            <!-- Game Controls -->
-            <div class="space-y-4">
-                <!-- Dice -->
-                <div class="bg-white rounded-xl shadow-lg p-4">
-                    <h3 class="text-lg font-bold mb-4 text-center">Lempar Dadu</h3>
-                    <div class="flex justify-center">
-                        <div id="dice" class="dice">🎲</div>
-                    </div>
-                    <div id="diceResult" class="text-center mt-2 font-bold text-lg"></div>
-                </div>
-
-                <!-- Player Status -->
-                <div class="bg-white rounded-xl shadow-lg p-4">
-                    <h3 class="text-lg font-bold mb-4">Status Pemain</h3>
-                    <div id="playerStatus" class="space-y-2"></div>
-                </div>
-
-                <!-- Game Rules -->
-                <div class="bg-white rounded-xl shadow-lg p-4">
-                    <h3 class="text-lg font-bold mb-2">Aturan Permainan</h3>
-                    <ul class="text-sm text-gray-600 space-y-1">
-                        <li>🪜 Tangga hijau = naik ke atas</li>
-                        <li>🐍 Ular merah = turun ke bawah</li>
-                        <li>❓ Kotak khusus = jawab pertanyaan</li>
-                        <li>✅ Jawaban benar = +10 poin</li>
-                        <li>❌ Jawaban salah = -2 poin</li>
-                        <li>🏆 Capai kotak 100 = +50 poin bonus!</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Question Modal -->
-    <div id="questionModal" class="hidden fixed inset-0 bg-black bg-opacity-50 question-modal z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6">
-            <div class="text-center mb-4">
-                <h3 class="text-xl font-bold text-gray-800">Pertanyaan Informatika</h3>
-            </div>
-            
-            <div id="questionContent" class="mb-6">
-                <p id="questionText" class="text-gray-700 mb-4"></p>
-                <div id="questionOptions" class="space-y-2"></div>
-            </div>
-            
-            <div class="text-center">
-                <button id="submitAnswer" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
-                    Jawab
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Win Modal (Updated to show Nilai Akhir for both players) -->
-    <div id="winModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full p-6 text-center">
-            <div class="text-6xl mb-4">🏆</div>
-            <h3 id="winModalTitle" class="text-2xl font-bold text-gray-800 mb-4">Permainan Selesai!</h3>
-            <p id="winnerText" class="text-gray-600 mb-6"></p> <!-- Digunakan untuk pesan utama (menang/waktu habis) -->
-
-            <div id="finalScores" class="space-y-3 mb-6">
-                <!-- Data skor pemain akan dimasukkan di sini -->
-            </div>
-
-            <button id="playAgain" class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
-                Main Lagi
-            </button>
-        </div>
-    </div>
-
-    <!-- Notification -->
-    <div id="notification" class="notification"></div>
 
     <script>
-        // Game state
-        let gameState = {
-            players: [],
-            currentPlayerIndex: 0,
-            gameStarted: false,
-            gameTimer: null,
-            gameTimeLeft: 600, // 10 minutes in seconds (Default value)
-            currentQuestionIndex: 0,
-            currentQuestion: null
-        };
+        const gameBoard = document.getElementById('gameBoard');
+        const gameOver = document.getElementById('gameOver');
+        const gameStatus = document.getElementById('gameStatus');
+        const score1Element = document.getElementById('score1');
+        const score2Element = document.getElementById('score2');
 
-        // Game board configuration
-        const ladders = {
-            4: 14, 9: 31, 17: 37, 20: 38, 28: 84, 40: 59, 51: 67, 63: 81, 71: 91
-        };
-
-        const snakes = {
-            16: 6, 47: 26, 49: 11, 56: 53, 62: 19, 64: 60, 87: 24, 93: 73, 95: 75, 98: 78
-        };
-
-        const questionSquares = [8, 15, 22, 29, 36, 43, 50, 57, 64, 71, 78, 85, 92];
-
-        // Computer science questions (UPDATED: Total 50 questions based on "Jelajahi Dunia Informatika.pdf")
-        const questions = [
-            // Topik 1: Informatika & Profesi Masa Depan (10 Soal)
-            {
-                question: "Menurut grafik 'Permintaan Talenta Digital', bidang profesi apa yang memiliki persentase Proyeksi (biru) paling tinggi?",
-                options: ["Programmer/Pengembang Perangkat Lunak", "Pengolah Data", "Spesialis Jaringan", "Analisis Data"],
-                correct: 3 
-            },
-            {
-                question: "Profesi yang sangat terdampak dan terus didorong pesat oleh Artificial Intelligence (AI) menurut materi adalah...",
-                options: ["Pengembang Web", "Pekerja Pabrik Tradisional", "Profesi yang Bertiagal", "Guru Sejarah"],
-                correct: 2 
-            },
-            {
-                question: "Menurut materi, Informatika bukan hanya tentang 'coding', tetapi juga tentang bagaimana domain menggiatkan...?",
-                options: ["Pengolahan data", "Teknologi digital", "Tanding", "Perangkat keras"],
-                correct: 2 
-            },
-            {
-                question: "Apa tujuan dari 'Panduan Keterampilan Digital Esensial' ini, seperti yang disebutkan di awal materi?",
-                options: ["Membantu Siswa Kelas XII SMA", "Membimbing dalam menjadi Talenta Digital Masa Depan", "Mempelajari Bahasa Pemrograman", "Meningkatkan Kecepatan Koneksi"],
-                correct: 1
-            },
-            {
-                question: "Berdasarkan grafik, bidang 'Programmer/Pengembang Perangkat Lunak' memiliki Proyeksi sekitar...",
-                options: ["7%", "8%", "9%", "10%"],
-                correct: 1
-            },
-            {
-                question: "Permintaan Talenta Digital Saat Ini (hijau) paling tinggi terdapat pada bidang profesi apa?",
-                options: ["Analisis Data", "Insinyur Kecerdasan Buatan", "Pengolah Data", "Manajer Teknologi"],
-                correct: 0 
-            },
-            {
-                question: "Profesi yang paling mungkin digantikan secara cepat oleh sistem otomatisasi adalah profesi yang bersifat...",
-                options: ["Kreatif dan Strategis", "Bertiagal dan Rutin", "Kompleks dan Inovatif", "Edukasi dan Pelatihan"],
-                correct: 1 
-            },
-            {
-                question: "Peningkatan permintaan talenta digital terjadi seiring dengan percepatan perkembangan teknologi, terutama...",
-                options: ["Komunikasi Satelit", "Artificial Intelligence (AI)", "Fisika Kuantum", "Industri Kerajinan"],
-                correct: 1
-            },
-            {
-                question: "Bidang profesi yang memiliki selisih persentase terbesar antara Permintaan Saat Ini dan Proyeksi adalah...",
-                options: ["Spesialis Jaringan", "Pengolah Data", "Programmer", "Insinyur AI"],
-                correct: 3 
-            },
-            {
-                question: "Apa kunci untuk menghadapi pergeseran profesi masa depan yang didorong oleh AI?",
-                options: ["Menghindari teknologi baru", "Menguasai keterampilan digital esensial", "Hanya belajar coding", "Mengandalkan pekerjaan fisik saja"],
-                correct: 1 
-            },
-            // Topik 2: Warga Digital Cerdas & Bertanggung Jawab (10 Soal)
-            {
-                question: "Istilah dalam Glosarium yang merujuk pada 'Aksi atau aturan perilaku yang baik dalam dunia maya' adalah...",
-                options: ["Membaca Lateral", "Ekosistem Periksa Fakta", "Etika Digital", "Hoaks"],
-                correct: 2 
-            },
-            {
-                question: "Manakah yang BUKAN salah satu dari '3 Pertanyaan Kritis Sebelum Berbagi' informasi?",
-                options: ["Apakah didukung fakta?", "Apa tujuannya?", "Berapa banyak yang melihatnya?", "Siapa pembuatnya?"],
-                correct: 2 
-            },
-            {
-                question: "Pertanyaan kritis 'Apakah didukung fakta?' bertujuan untuk mengecek...",
-                options: ["Kualitas gambar", "Kebenaran data dan bukti", "Niat pembuat konten", "Jumlah pengikut"],
-                correct: 1 
-            },
-            {
-                question: "Apa definisi 'Hoaks' menurut Glosarium?",
-                options: ["Berita benar yang viral", "Berita atau informasi palsu yang dimuat seolah-olah benar", "Konten video lucu", "Pencarian kata kunci"],
-                correct: 1 
-            },
-            {
-                question: "Yang dimaksud dengan 'Jebakan Informasi' yang harus diwaspadai adalah informasi yang bersifat...",
-                options: ["Netral dan objektif", "Membuat marah dan memancing emosi", "Resmi dari pemerintah", "Berbentuk .pdf"],
-                correct: 1 
-            },
-            {
-                question: "Jika tujuan pembuat informasi adalah untuk 'memecah belah' atau 'memancing keributan', ini berkaitan dengan pertanyaan kritis...",
-                options: ["Siapa pembuatnya?", "Apa tujuannya?", "Apakah didukung fakta?", "Kapan dibuat?"],
-                correct: 1 
-            },
-            {
-                question: "Mengapa penting untuk mengetahui 'Siapa pembuatnya' sebelum berbagi informasi?",
-                options: ["Untuk mengetahui alamat rumahnya", "Untuk menilai kredibilitas dan keahliannya", "Untuk mengajaknya berdiskusi", "Untuk melihat foto profilnya"],
-                correct: 1
-            },
-            {
-                question: "Perilaku berbagi informasi palsu (hoaks) secara sadar dan sengaja melanggar prinsip...",
-                options: ["Membaca Lateral", "Karya Intelektual", "Etika Digital", "Pencarian Tepat"],
-                correct: 2 
-            },
-            {
-                question: "Menggunakan kata-kata kasar atau menghina orang lain di media sosial merupakan contoh pelanggaran terhadap...",
-                options: ["Karya Intelektual", "Membaca Lateral", "Etika Digital", "Pencarian Tepat"],
-                correct: 2
-            },
-            {
-                question: "Sebagai Warga Digital, kita harus cerdas dan bertanggung jawab, terutama dalam hal...",
-                options: ["Mengakses situs web manapun", "Mengabaikan sumber informasi", "Memverifikasi dan memproses informasi yang diterima", "Berbagi tanpa berpikir panjang"],
-                correct: 2
-            },
-            // Topik 3: Menguasai Alat Digital Sehari-hari (10 Soal)
-            {
-                question: "Untuk membatasi hasil pencarian hanya pada domain tertentu (misal: hanya di situs 'kemdikbud.go.id'), Jurus Jitu Pencarian Google apa yang digunakan?",
-                options: ["Eliminasi Kata", "Pencarian Tepat", "Jenis File", "Spesifik Situs"],
-                correct: 3 
-            },
-            {
-                question: "Teknik dalam Pencarian Google yang bertujuan untuk mencari file berdasarkan formatnya (misal: .pdf atau .docx) adalah...",
-                options: ["Pencarian Tepat", "Jenis File", "Eliminasi Kata", "Konfirmasi Sumber"],
-                correct: 1 
-            },
-            {
-                question: "Apa manfaat dari menguasai 'Jurus Jitu Pencarian Google' seperti yang disebutkan dalam materi?",
-                options: ["Mempercepat koneksi internet", "Membuat pekerjaan marjad lebih mudah/baik", "Menghapus iklan pop-up", "Mendapatkan jawaban langsung"],
-                correct: 1
-            },
-            {
-                question: "Jurus 'Eliminaal Kata' dalam Pencarian Google berfungsi untuk...",
-                options: ["Mencari frase yang persis sama", "Mengabaikan kata-kata tertentu dari hasil", "Mencari di situs spesifik", "Mencari dokumen bertipe tertentu"],
-                correct: 1 
-            },
-            {
-                question: "Jurus Pencarian Google yang menggunakan tanda kutip (\") untuk mencari frasa yang persis sama adalah...",
-                options: ["Eliminasi Kata", "Jenis File", "Pencarian Tepat", "Spesifik Situs"],
-                correct: 2 
-            },
-            {
-                question: "Jika Anda ingin mencari 'resep ayam' tetapi tidak ingin melihat hasil tentang 'goreng', jurus apa yang Anda gunakan?",
-                options: ["Pencarian Tepat", "Jenis File", "Eliminasi Kata", "Spesifik Situs"],
-                correct: 2 
-            },
-            {
-                question: "Apa yang dimaksud dengan 'Alat Digital Sehari-hari' dalam konteks materi ini?",
-                options: ["Hanya smartphone", "Hanya komputer", "Perangkat lunak dan perangkat keras yang digunakan untuk kegiatan harian", "Semua perangkat elektronik di rumah"],
-                correct: 2 
-            },
-            {
-                question: "Teknik pencarian yang bertujuan mendapatkan pekerjaan 'marjad lebih' (menjadi lebih baik/efisien) dapat dilakukan dengan menguasai...",
-                options: ["Jurus Jitu Pencarian Google", "Manajemen Berkas", "Sistem Operasi", "Membaca Cepat"],
-                correct: 0
-            },
-            {
-                question: "Untuk mencari informasi tentang 'Virus Corona' tetapi mengecualikan kata 'vaksin', sintaks pencarian yang tepat adalah...",
-                options: ["'Virus Corona' vaksin", "Virus Corona filetype:pdf", "Virus Corona -vaksin", "Virus Corona site:wikipedia.org"],
-                correct: 2 
-            },
-            {
-                question: "Jurus Pencarian Google mana yang paling efektif untuk penelitian akademis yang membutuhkan dokumen resmi?",
-                options: ["Pencarian Tepat", "Eliminasi Kata", "Jenis File", "Spesifik Situs"],
-                correct: 2 // Jenis File (misal: filetype:pdf)
-            },
-            // Topik 4: Teknik Verifikasi Terbaik - Membaca Lateral (10 Soal)
-            {
-                question: "Apa nama teknik verifikasi terbaik yang melibatkan 'membuka tab baru dan mencari tahu tentang website atau topik dari berbagai sumber lain'?",
-                options: ["Membaca Cepat", "Membaca Intensif", "Membaca Lateral", "Membaca Ekstensif"],
-                correct: 2 
-            },
-            {
-                question: "Setelah 'Temukan Informasi' dalam langkah Membaca Lateral, langkah apa yang HARUS segera dilakukan?",
-                options: ["Bagikan ke teman", "Jangan Langsung Baca, Buka Tab Baru", "Buat Keputusan", "Selidiki Sumbernya"],
-                correct: 1 
-            },
-            {
-                question: "Manakah langkah ketiga dalam Teknik Membaca Lateral?",
-                options: ["Temukan Informasi", "Cari Konfirmasi dari Sumber Lain", "Selidiki Sumbernya", "Buat Keputusan"],
-                correct: 2 
-            },
-            {
-                question: "Langkah terakhir dalam Teknik Membaca Lateral adalah...",
-                options: ["Cari Konfirmasi", "Selidiki Sumber", "Buat Keputusan", "Temukan Informasi"],
-                correct: 2 
-            },
-            {
-                question: "Pada langkah 'Selidiki Sumbernya', hal penting apa yang perlu dicari tahu?",
-                options: ["Apakah ada foto yang menarik", "Siapa penulis atau pembuat konten tersebut", "Berapa lama waktu yang dibutuhkan untuk membaca", "Apakah warna tulisannya bagus"],
-                correct: 1 
-            },
-            {
-                question: "Tujuan dari langkah 'Cari Konfirmasi dari Sumber Lain' adalah...",
-                options: ["Membandingkan tanggal terbit", "Mengetahui pendapat pribadi", "Mencari sumber tepercaya yang memverifikasi kebenaran informasi", "Mencari kritik dari sumber lain"],
-                correct: 2 
-            },
-            {
-                question: "Mengapa disarankan untuk 'Jangan Langsung Baca, Buka Tab Baru'?",
-                options: ["Agar dapat beristirahat sejenak", "Untuk mencari sumber tepercaya dan menghindari informasi bias", "Untuk menghemat kuota internet", "Karena informasi di halaman itu pasti salah"],
-                correct: 1 
-            },
-            {
-                question: "Apa yang harus dilakukan setelah membandingkan informasi dari berbagai sumber (Langkah 4: Cari Konfirmasi)?",
-                options: ["Memulai pencarian baru", "Buat Keputusan", "Menutup semua tab", "Mengirim email ke penulis"],
-                correct: 1 
-            },
-            {
-                question: "Teknik Membaca Lateral sangat penting untuk memverifikasi kebenaran informasi di dunia...",
-                options: ["Perpustakaan", "Fisik (surat kabar cetak)", "Digital", "Sejarah Kuno"],
-                correct: 2 
-            },
-            {
-                question: "Jika suatu sumber terkesan memihak ('bias') dalam langkah 'Selidiki Sumbernya', tindakan terbaik selanjutnya adalah...",
-                options: ["Mengabaikannya", "Langsung memercayainya", "Mencari konfirmasi dari sumber lain yang netral", "Berdebat di kolom komentar"],
-                correct: 2
-            },
-            // Pertanyaan Varian Tambahan / Glosarium (10 Soal)
-            {
-                question: "Panduan ini ditujukan sebagai 'Panduan Keterampilan Digital Esensial' untuk Siswa Kelas...",
-                options: ["VII SMP", "IX SMP", "X SMK", "XII SMA"],
-                correct: 2 
-            },
-            {
-                question: "Menurut Glosarium, apa yang dimaksud dengan 'Karya Intelektual'?",
-                options: ["Berita Hoaks", "Hak cipta yang diberikan saputih pelicita karthik", "Ekosistem Periksa Fakta", "Etika Digital"],
-                correct: 1
-            },
-            {
-                question: "Tiga pertanyaan kritis sebelum berbagi informasi adalah 'Siapa pembuatnya?', 'Apa tujuannya?', dan...",
-                options: ["Kapan diposting?", "Apakah didukung fakta?", "Seberapa populer?", "Berapa banyak yang harus saya bagikan?"],
-                correct: 1 
-            },
-            {
-                question: "Teknik verifikasi yang paling efektif untuk menyaring sumber informasi di dunia digital adalah...",
-                options: ["Membaca cepat", "Membaca diagonal", "Membaca Lateral", "Membaca Ekstensif"],
-                correct: 2 
-            },
-            {
-                question: "Pada grafik 'Permintaan Talenta Digital', bidang 'Programmer/Pengembang Perangkat Lunak' memiliki persentase Permintaan Saat Ini (hijau) sekitar...",
-                options: ["6%", "7%", "8%", "9%"],
-                correct: 1 
-            },
-            {
-                question: "Apa yang merupakan contoh dari 'Ekosistem Periksa Fakta'?",
-                options: ["Jaringan media sosial", "Platform yang menyediakan verifikasi kebenaran informasi", "Perusahaan teknologi raksasa", "Sekolah Menengah Kejuruan (SMK)"],
-                correct: 1
-            },
-            {
-                question: "Menurut Glosarium, 'Mak yang diberikan saputih pelicita karthik' adalah definisi dari...",
-                options: ["Hoaks", "Etika Digital", "Karya Intelektual", "Membaca Lateral"],
-                correct: 2 
-            },
-            {
-                question: "Menurut Glosarium, apa yang dimaksud dengan 'Hoaks'?",
-                options: ["Berita faktual", "Informasi palsu yang dimuat seolah-olah benar", "Berita yang diumumkan di media massa", "Panduan keterampilan digital"],
-                correct: 1 
-            },
-            {
-                question: "Perangkat lunak yang digunakan untuk mengimplementasikan perangkat lunak, seperti yang disinggung di Glosarium, adalah definisi dari...",
-                options: ["Perangkat Keras", "Etika Digital", "Alat Digital", "Basis Data"],
-                correct: 2 // Merujuk pada Alat Digital
-            },
-            {
-                question: "Mengapa keterampilan Membaca Lateral penting untuk dimiliki di era digital?",
-                options: ["Untuk mempercepat koneksi internet", "Untuk menghindari jebakan informasi dan memverifikasi kebenaran", "Untuk menemukan lebih banyak teman", "Untuk menjadi programmer yang sukses"],
-                correct: 1 
-            }
-        ];
+        let BOARD_WIDTH = 900;
+        let BOARD_HEIGHT = 600;
         
-        // Konstanta untuk perhitungan skor (diperbarui sesuai 50 soal)
-        // 50 kotak pertanyaan * 10 poin + 50 bonus menang = 550 Poin
-        const MAX_RAW_SCORE = 550; 
+        // Adjust board size for mobile
+        function adjustBoardSize() {
+            const gameBoard = document.getElementById('gameBoard');
+            const rect = gameBoard.getBoundingClientRect();
+            BOARD_WIDTH = rect.width;
+            BOARD_HEIGHT = rect.height;
+        }
+        const SEGMENT_SIZE = 20;
+        const COLS = BOARD_WIDTH / SEGMENT_SIZE;
+        const ROWS = BOARD_HEIGHT / SEGMENT_SIZE;
 
-        // Initialize login screen
-        function initLogin() {
-            let selectedColor1 = '#3b82f6';
-            let selectedColor2 = '#ef4444';
+        let gameRunning = false;
+        let gameLoop;
+
+        // Game state
+        let player = {
+            snake: [{x: 22, y: 15}, {x: 21, y: 15}, {x: 20, y: 15}],
+            direction: {x: 1, y: 0},
+            score: 0,
+            color: 'player1-snake'
+        };
+
+        let food = {x: 30, y: 15};
+
+        // Question system variables
+        let currentQuestion = null;
+        let questionTimer = null;
+        let timeLeft = 10;
+        let questionActive = false;
+
+        // Mobile detection and controls
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+        
+        if (isMobile) {
+            document.getElementById('mobileControls').style.display = 'block';
+        }
+
+        // Touch controls for mobile
+        document.querySelectorAll('.control-btn').forEach(btn => {
+            btn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                const direction = btn.dataset.direction;
+                handleDirectionInput(direction);
+            });
             
-            // Player 1 color selection
-            document.querySelectorAll('.color-btn-1').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('.color-btn-1').forEach(b => b.classList.remove('ring-4', 'ring-blue-300'));
-                    btn.classList.add('ring-4', 'ring-blue-300');
-                    selectedColor1 = btn.dataset.color;
-                });
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const direction = btn.dataset.direction;
+                handleDirectionInput(direction);
             });
+        });
 
-            // Player 2 color selection
-            document.querySelectorAll('.color-btn-2').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('.color-btn-2').forEach(b => b.classList.remove('ring-4', 'ring-green-300'));
-                    btn.classList.add('ring-4', 'ring-green-300');
-                    selectedColor2 = btn.dataset.color;
-                });
-            });
-
-            document.getElementById('startGame').addEventListener('click', () => {
-                const player1NameInput = document.getElementById('player1Name');
-                const player2NameInput = document.getElementById('player2Name');
-
-                player1NameInput.classList.remove('border-red-500', 'border-4');
-                player2NameInput.classList.remove('border-red-500', 'border-4');
-
-                const player1Name = player1NameInput.value.trim();
-                const player2Name = player2NameInput.value.trim();
-                
-                let hasError = false;
-
-                if (!player1Name) {
-                    showNotification('Masukkan nama untuk Pemain 1!', 'wrong');
-                    player1NameInput.classList.add('border-red-500', 'border-4');
-                    hasError = true;
-                }
-
-                if (!player2Name) {
-                    showNotification('Masukkan nama untuk Pemain 2!', 'wrong');
-                    player2NameInput.classList.add('border-red-500', 'border-4');
-                    hasError = true;
-                }
-
-                if (hasError) return;
-
-
-                if (player1Name === player2Name) {
-                    showNotification('Nama pemain harus berbeda!', 'wrong');
-                    player1NameInput.classList.add('border-red-500', 'border-4');
-                    player2NameInput.classList.add('border-red-500', 'border-4');
-                    return;
-                }
-
-                if (selectedColor1 === selectedColor2) {
-                    showNotification('Warna pemain harus berbeda!', 'wrong');
-                    return;
-                }
-                
-                // Ambil durasi waktu yang dipilih dan update gameState
-                const durationElement = document.getElementById('gameDuration');
-                gameState.gameTimeLeft = parseInt(durationElement.value);
-
-                gameState.players = [
-                    {
-                        name: player1Name,
-                        position: 0,
-                        color: selectedColor1,
-                        points: 0
-                    },
-                    {
-                        name: player2Name,
-                        position: 0,
-                        color: selectedColor2,
-                        points: 0
+        function handleDirectionInput(direction) {
+            if (!gameRunning) return;
+            
+            switch(direction) {
+                case 'up':
+                    if (player.direction.y !== 1) {
+                        player.direction = {x: 0, y: -1};
                     }
-                ];
-
-                document.getElementById('loginScreen').classList.add('hidden');
-                document.getElementById('gameScreen').classList.remove('hidden');
-                initGame();
-            });
+                    break;
+                case 'down':
+                    if (player.direction.y !== -1) {
+                        player.direction = {x: 0, y: 1};
+                    }
+                    break;
+                case 'left':
+                    if (player.direction.x !== 1) {
+                        player.direction = {x: -1, y: 0};
+                    }
+                    break;
+                case 'right':
+                    if (player.direction.x !== -1) {
+                        player.direction = {x: 1, y: 0};
+                    }
+                    break;
+            }
         }
 
-        // Initialize game
-        function initGame() {
-            createBoard();
-            updatePlayerStatus();
-            updateCurrentPlayer();
-            startGameTimer();
+        // Keyboard Controls
+        document.addEventListener('keydown', (e) => {
+            if (!gameRunning) return;
             
-            // Update initial timer display based on selected duration
-            const initialMinutes = Math.floor(gameState.gameTimeLeft / 60);
-            const initialSeconds = gameState.gameTimeLeft % 60;
-            document.getElementById('gameTimer').textContent = `${initialMinutes}:${initialSeconds.toString().padStart(2, '0')}`;
+            // WASD and Arrow key controls
+            switch(e.key.toLowerCase()) {
+                case 'w':
+                case 'arrowup':
+                    handleDirectionInput('up');
+                    break;
+                case 's':
+                case 'arrowdown':
+                    handleDirectionInput('down');
+                    break;
+                case 'a':
+                case 'arrowleft':
+                    handleDirectionInput('left');
+                    break;
+                case 'd':
+                case 'arrowright':
+                    handleDirectionInput('right');
+                    break;
+            }
+            
+            e.preventDefault();
+        });
 
+        function moveSnake() {
+            const head = {
+                x: player.snake[0].x + player.direction.x,
+                y: player.snake[0].y + player.direction.y
+            };
 
-            document.getElementById('dice').addEventListener('click', rollDice);
-            document.getElementById('submitAnswer').addEventListener('click', submitAnswer);
-            document.getElementById('playAgain').addEventListener('click', resetGame);
+            player.snake.unshift(head);
+
+            // Check if snake ate food
+            if (head.x === food.x && head.y === food.y) {
+                showQuestion();
+                generateFood();
+            } else {
+                player.snake.pop();
+            }
         }
 
-        // Start game timer
-        function startGameTimer() {
-            const timerElement = document.getElementById('gameTimer');
+        function checkCollisions() {
+            const head = player.snake[0];
             
-            gameState.gameTimer = setInterval(() => {
-                gameState.gameTimeLeft--;
-                
-                const minutes = Math.floor(gameState.gameTimeLeft / 60);
-                const seconds = gameState.gameTimeLeft % 60;
-                const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-                
-                timerElement.textContent = timeString;
-                
-                // Warning when 3 minutes left
-                if (gameState.gameTimeLeft <= 180) {
-                    timerElement.classList.add('timer-warning');
+            // Wall collision
+            if (head.x < 0 || head.x >= COLS || head.y < 0 || head.y >= ROWS) {
+                return 'wall';
+            }
+
+            // Self collision
+            for (let i = 1; i < player.snake.length; i++) {
+                if (head.x === player.snake[i].x && head.y === player.snake[i].y) {
+                    return 'self';
                 }
+            }
+
+            return null;
+        }
+
+        function generateFood() {
+            let validPosition = false;
+            
+            while (!validPosition) {
+                food.x = Math.floor(Math.random() * COLS);
+                food.y = Math.floor(Math.random() * ROWS);
                 
-                // Time's up
-                if (gameState.gameTimeLeft <= 0) {
-                    clearInterval(gameState.gameTimer);
-                    gameState.gameTimer = null;
-                    endGameByTime();
+                validPosition = true;
+                
+                // Check if food spawns on snake
+                for (let segment of player.snake) {
+                    if (food.x === segment.x && food.y === segment.y) {
+                        validPosition = false;
+                        break;
+                    }
+                }
+            }
+        }
+
+        function render() {
+            // Clear all snake segments and food, but keep game over element
+            const existingGameOver = gameBoard.querySelector('.game-over');
+            gameBoard.innerHTML = '';
+            if (existingGameOver) {
+                gameBoard.appendChild(existingGameOver);
+            }
+
+            // Render snake
+            for (let segment of player.snake) {
+                const segmentElement = document.createElement('div');
+                segmentElement.className = 'snake-segment player1-snake';
+                segmentElement.style.left = segment.x * SEGMENT_SIZE + 'px';
+                segmentElement.style.top = segment.y * SEGMENT_SIZE + 'px';
+                gameBoard.appendChild(segmentElement);
+            }
+
+            // Render food
+            const foodElement = document.createElement('div');
+            foodElement.className = 'food';
+            foodElement.style.left = food.x * SEGMENT_SIZE + 'px';
+            foodElement.style.top = food.y * SEGMENT_SIZE + 'px';
+            gameBoard.appendChild(foodElement);
+
+            // Update score
+            document.getElementById('score').textContent = player.score;
+        }
+
+        function gameStep() {
+            if (!gameRunning) return;
+
+            moveSnake();
+
+            const collision = checkCollisions();
+            if (collision) {
+                endGame(collision);
+                return;
+            }
+
+            render();
+        }
+
+        function endGame(reason) {
+            gameRunning = false;
+            clearInterval(gameLoop);
+
+            let message = '';
+            if (reason === 'wall') {
+                message = '💥 Game Over! 💥<br>Kamu menabrak dinding!';
+            } else if (reason === 'self') {
+                message = '🐍 Game Over! 🐍<br>Kamu menabrak diri sendiri!';
+            }
+
+            message += `<br><br>Skor Akhir: ${player.score}`;
+
+            gameStatus.innerHTML = message;
+            gameOver.style.display = 'block';
+        }
+
+        function generateQuestion() {
+            const questions = [
+                {
+                    question: "Jenis mesin pencari yang cara kerjanya adalah mengindeks web secara otomatis untuk menemukan hasil paling relevan adalah...",
+                    options: ["Web Directory", "Search Engine", "Meta-Search Engine", "Browser"],
+                    correct: 1
+                },
+                {
+                    question: "Apa perbedaan utama dari Web Directory dibandingkan dengan Search Engine?",
+                    options: [
+                        "Mengindeks hasil paling relevan secara real-time.",
+                        "Hanya menampilkan hasil yang berbayar (iklan).",
+                        "Daftar situs dikelompokkan manual berdasarkan kategori.",
+                        "Menggabungkan hasil dari tiga mesin pencari sekaligus."
+                    ],
+                    correct: 2
+                },
+                {
+                    question: "Apa keuntungan menggunakan Meta-Search Engine?",
+                    options: [
+                        "Menghasilkan lebih banyak hasil yang sama.",
+                        "Menggabungkan hasil dari beberapa mesin pencari sekaligus.",
+                        "Mengecualikan kata tertentu dari hasil pencarian.",
+                        "Hanya mencari situs yang memiliki domain .edu."
+                    ],
+                    correct: 1
+                },
+                {
+                    question: "Mengapa Web Directory dianggap kurang relevan saat ini dibandingkan Search Engine?",
+                    options: [
+                        "Karena Web Directory mengenakan biaya pada pengguna.",
+                        "Karena proses pengelompokannya manual dan lambat mengikuti perkembangan web.",
+                        "Karena hanya bisa diakses menggunakan smartphone.",
+                        "Karena tidak bisa menampilkan gambar atau video."
+                    ],
+                    correct: 1
+                },
+                {
+                    question: "Kata kunci umum seperti 'sepatu' cenderung menghasilkan...",
+                    options: [
+                        "Jumlah hasil sedikit dengan tingkat relevansi yang tinggi.",
+                        "Jumlah hasil banyak dengan tingkat relevansi yang bervariasi.",
+                        "Hasil yang hanya terkait dengan penjualan dan e-commerce.",
+                        "Hasil yang dikelompokkan secara manual oleh manusia."
+                    ],
+                    correct: 1
+                },
+                {
+                    question: "Apa manfaat utama menggunakan kata kunci spesifik (long-tail) seperti 'review sepatu lari pria ukuran 42'?",
+                    options: [
+                        "Menghasilkan volume hasil pencarian yang maksimal.",
+                        "Memperoleh hasil yang relevan dan akurat sesuai kebutuhan.",
+                        "Mengaktifkan mode pencarian Meta-Search Engine secara otomatis.",
+                        "Mengecualikan semua hasil yang berasal dari media sosial."
+                    ],
+                    correct: 1
+                },
+                {
+                    question: "Dalam perbandingan efektivitas, Kata Kunci Spesifik memiliki tingkat relevansi yang tinggi, sedangkan Kata Kunci Umum memiliki tingkat...",
+                    options: [
+                        "Relevansi yang sangat rendah.",
+                        "Jumlah hasil yang sedikit.",
+                        "Relevansi yang bervariasi, namun Jumlah Hasil yang Tinggi.",
+                        "Penggunaan operator pencarian wajib."
+                    ],
+                    correct: 2
+                },
+                {
+                    question: "Jika Anda mencari frasa yang harus sama persis, operator pencarian yang tepat untuk digunakan adalah...",
+                    options: [
+                        "site:indonesia.go.id",
+                        "INURL:",
+                        '"Frasa Persis"',
+                        "OR"
+                    ],
+                    correct: 2
+                },
+                {
+                    question: "Untuk mengecualikan kata tertentu dari hasil pencarian Anda (misalnya: mencari browser, tetapi tidak ingin melihat hasil tentang Chrome), operator mana yang harus Anda tambahkan?",
+                    options: [
+                        "Kata yang diawali tanda plus (+)",
+                        "Tanda kurung siku ([])",
+                        "Kata yang diawali tanda minus (-)",
+                        "Tanda bintang (*)"
+                    ],
+                    correct: 2
+                },
+                {
+                    question: "Anda ingin mencari informasi tentang 'Python' atau 'Javascript'. Operator Logika yang paling sesuai adalah...",
+                    options: [
+                        "PYTHON AND JAVASCRIPT",
+                        "PYTHON OR JAVASCRIPT",
+                        "PYTHON -JAVASCRIPT",
+                        '"PYTHON JAVASCRIPT"'
+                    ],
+                    correct: 1
+                },
+                {
+                    question: "Operator 'AND' digunakan untuk mencari...",
+                    options: [
+                        "Dua kata kunci atau lebih yang salah satunya ada di hasil.",
+                        "Dua kata kunci atau lebih yang semuanya harus ada di hasil.",
+                        "Hanya situs yang dikelompokkan dalam Web Directory.",
+                        "Frasa yang sama persis dalam urutan yang tepat."
+                    ],
+                    correct: 1
+                }
+            ];
+            
+            const randomIndex = Math.floor(Math.random() * questions.length);
+            return questions[randomIndex];
+        }
+
+        function showQuestion() {
+            if (questionActive) return;
+            
+            gameRunning = false;
+            questionActive = true;
+            currentQuestion = generateQuestion();
+            timeLeft = 15;
+            
+            document.getElementById('question').textContent = currentQuestion.question;
+            document.getElementById('timer').textContent = timeLeft;
+            
+            // Generate options
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            
+            currentQuestion.options.forEach((option, index) => {
+                const optionBtn = document.createElement('button');
+                optionBtn.className = 'option-btn';
+                optionBtn.textContent = `${String.fromCharCode(65 + index)}. ${option}`;
+                optionBtn.onclick = () => selectOption(index);
+                optionsContainer.appendChild(optionBtn);
+            });
+            
+            document.getElementById('questionModal').style.display = 'flex';
+            
+            // Start timer
+            questionTimer = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').textContent = timeLeft;
+                
+                if (timeLeft <= 0) {
+                    timeUp();
                 }
             }, 1000);
         }
 
-        // End game when time runs out (Updated to show final score)
-        function endGameByTime() {
-            // Find winner by highest points, or highest position if points are tied
-            let winner = gameState.players[0];
-            for (let i = 1; i < gameState.players.length; i++) {
-                const player = gameState.players[i];
-                if (player.points > winner.points || 
-                    (player.points === winner.points && player.position > winner.position)) {
-                    winner = player;
+        function selectOption(selectedIndex) {
+            // Disable all options
+            const options = document.querySelectorAll('.option-btn');
+            options.forEach(btn => btn.style.pointerEvents = 'none');
+            
+            // Show correct/incorrect
+            options.forEach((btn, index) => {
+                if (index === currentQuestion.correct) {
+                    btn.classList.add('correct');
+                } else if (index === selectedIndex && index !== currentQuestion.correct) {
+                    btn.classList.add('incorrect');
                 }
+            });
+            
+            // Update score and show feedback
+            if (selectedIndex === currentQuestion.correct) {
+                player.score += 10;
+                showFeedback('✅ Benar! +10 poin', '#4ecdc4');
+            } else {
+                player.score = Math.max(0, player.score - 2);
+                const correctAnswer = currentQuestion.options[currentQuestion.correct];
+                showFeedback(`❌ Salah! Jawaban: ${correctAnswer} (-2 poin)`, '#ff6b6b');
             }
             
-            showNotification('Waktu habis! Permainan selesai!', 'wrong');
+            // Close question after delay
             setTimeout(() => {
-                // Panggil showWinModal dengan flag timeOver = true
-                showWinModal(winner.name, winner.points, true);
+                closeQuestion();
             }, 2000);
         }
 
-        // Create game board
-        function createBoard() {
-            const board = document.getElementById('gameBoard');
-            board.innerHTML = '';
-
-            for (let i = 100; i >= 1; i--) {
-                const cell = document.createElement('div');
-                cell.className = 'board-cell bg-gray-50';
-                cell.id = `cell-${i}`;
-                
-                // Calculate position for snake pattern
-                const row = Math.floor((100 - i) / 10);
-                const col = (row % 2 === 0) ? (i - 1) % 10 : 9 - ((i - 1) % 10);
-                
-                // Add special styling
-                if (ladders[i]) {
-                    cell.classList.add('ladder');
-                    cell.innerHTML = `${i}<br>🪜`;
-                } else if (snakes[i]) {
-                    cell.classList.add('snake');
-                    cell.innerHTML = `${i}<br>🐍`;
-                } else if (questionSquares.includes(i)) {
-                    cell.classList.add('bg-yellow-200');
-                    cell.innerHTML = `${i}<br>❓`;
-                } else if (i === 100) {
-                    cell.classList.add('bg-gold-200');
-                    cell.innerHTML = `${i}<br>🏆`;
-                } else {
-                    cell.innerHTML = i;
-                }
-
-                board.appendChild(cell);
-            }
+        function skipQuestion() {
+            player.score = Math.max(0, player.score - 5);
+            showFeedback('⏭️ Dilewati! -5 poin', '#ffa500');
+            closeQuestion();
         }
 
-        // Roll dice
-        function rollDice() {
-            const dice = document.getElementById('dice');
-            const result = Math.floor(Math.random() * 6) + 1;
+        function timeUp() {
+            // Disable all options
+            const options = document.querySelectorAll('.option-btn');
+            options.forEach(btn => btn.style.pointerEvents = 'none');
             
-            dice.style.transform = 'rotate(360deg)';
-            setTimeout(() => {
-                dice.style.transform = 'rotate(0deg)';
-                dice.textContent = result;
-                document.getElementById('diceResult').textContent = `Hasil: ${result}`;
-                
-                movePlayer(result);
-            }, 300);
-        }
-
-        // Move player
-        function movePlayer(steps) {
-            const player = gameState.players[gameState.currentPlayerIndex];
-            const oldPosition = player.position;
-            let newPosition = oldPosition + steps;
-
-            if (newPosition > 100) {
-                newPosition = 100 - (newPosition - 100);
-            }
-
-            // Remove current player from old position
-            if (oldPosition > 0) {
-                const oldCell = document.getElementById(`cell-${oldPosition}`);
-                const oldPlayer = oldCell.querySelector(`.player[data-player="${gameState.currentPlayerIndex}"]`);
-                if (oldPlayer) oldPlayer.remove();
-            }
-
-            player.position = newPosition;
-
-            // Add player to new position
-            const newCell = document.getElementById(`cell-${newPosition}`);
-            const playerElement = document.createElement('div');
-            playerElement.className = 'player';
-            playerElement.style.backgroundColor = player.color;
-            playerElement.dataset.player = gameState.currentPlayerIndex;
-            
-            // Position multiple players in the same cell
-            const existingPlayers = newCell.querySelectorAll('.player');
-            if (existingPlayers.length > 0) {
-                playerElement.style.top = '2px';
-                playerElement.style.left = `${22 + (existingPlayers.length * 12)}px`;
-            }
-            
-            newCell.appendChild(playerElement);
-
-            // Check for special squares
-            setTimeout(() => {
-                if (newPosition === 100) {
-                    player.points += 50;
-                    updatePlayerStatus();
-                    if (gameState.gameTimer) {
-                        clearInterval(gameState.gameTimer);
-                        gameState.gameTimer = null;
-                    }
-                    // Panggil showWinModal untuk menang mencapai 100
-                    showWinModal(player.name, player.points);
-                    return;
+            // Show correct answer
+            options.forEach((btn, index) => {
+                if (index === currentQuestion.correct) {
+                    btn.classList.add('correct');
                 }
-
-                if (ladders[newPosition]) {
-                    showNotification(`${player.name} naik tangga! ${newPosition} → ${ladders[newPosition]}`, 'correct');
-                    setTimeout(() => {
-                        movePlayerTo(ladders[newPosition]);
-                    }, 1000);
-                } else if (snakes[newPosition]) {
-                    showNotification(`${player.name} kena ular! ${newPosition} → ${snakes[newPosition]}`, 'wrong');
-                    setTimeout(() => {
-                        movePlayerTo(snakes[newPosition]);
-                    }, 1000);
-                } else if (questionSquares.includes(newPosition)) {
-                    showQuestion();
-                } else {
-                    nextTurn();
-                }
-            }, 500);
-
-            updatePlayerStatus();
-        }
-
-        // Move player to specific position
-        function movePlayerTo(position) {
-            const player = gameState.players[gameState.currentPlayerIndex];
-            const oldCell = document.getElementById(`cell-${player.position}`);
-            const oldPlayer = oldCell.querySelector(`.player[data-player="${gameState.currentPlayerIndex}"]`);
-            if (oldPlayer) oldPlayer.remove();
-
-            player.position = position;
-
-            const newCell = document.getElementById(`cell-${position}`);
-            const playerElement = document.createElement('div');
-            playerElement.className = 'player';
-            playerElement.style.backgroundColor = player.color;
-            playerElement.dataset.player = gameState.currentPlayerIndex;
-            
-            // Position multiple players in the same cell
-            const existingPlayers = newCell.querySelectorAll('.player');
-            if (existingPlayers.length > 0) {
-                playerElement.style.top = '2px';
-                playerElement.style.left = `${22 + (existingPlayers.length * 12)}px`;
-            }
-            
-            newCell.appendChild(playerElement);
-
-            updatePlayerStatus();
-            
-            if (position === 100) {
-                player.points += 50;
-                updatePlayerStatus();
-                if (gameState.gameTimer) {
-                    clearInterval(gameState.gameTimer);
-                    gameState.gameTimer = null;
-                }
-                // Panggil showWinModal untuk menang mencapai 100
-                showWinModal(player.name, player.points);
-            } else {
-                nextTurn();
-            }
-        }
-
-        // Show question modal
-        function showQuestion() {
-            // Show questions in order, reset to 0 when all questions are used
-            if (gameState.currentQuestionIndex >= questions.length) {
-                gameState.currentQuestionIndex = 0;
-            }
-            
-            const question = questions[gameState.currentQuestionIndex];
-            gameState.currentQuestionIndex++;
-            
-            document.getElementById('questionText').textContent = question.question;
-            
-            const optionsContainer = document.getElementById('questionOptions');
-            optionsContainer.innerHTML = '';
-            
-            question.options.forEach((option, index) => {
-                const button = document.createElement('button');
-                button.className = 'w-full text-left p-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors';
-                button.textContent = `${String.fromCharCode(65 + index)}. ${option}`;
-                button.dataset.index = index;
-                button.addEventListener('click', () => {
-                    document.querySelectorAll('#questionOptions button').forEach(b => b.classList.remove('bg-blue-100', 'border-blue-500'));
-                    button.classList.add('bg-blue-100', 'border-blue-500');
-                });
-                optionsContainer.appendChild(button);
             });
-
-            // LOGIKA: Menonaktifkan tombol dadu saat modal pertanyaan muncul
-            const diceElement = document.getElementById('dice');
-            diceElement.style.pointerEvents = 'none';
-            diceElement.classList.add('opacity-50', 'cursor-not-allowed');
-
-            document.getElementById('questionModal').classList.remove('hidden');
-            gameState.currentQuestion = question; // Simpan objek pertanyaan ke game state
-        }
-
-        // Submit answer
-        function submitAnswer() {
-            // PERBAIKAN: Cek apakah currentQuestion ada sebelum mencoba mengakses propertinya
-            if (!gameState.currentQuestion) {
-                console.error("Kesalahan: Tidak ada pertanyaan aktif saat submitAnswer dipanggil.");
-                document.getElementById('questionModal').classList.add('hidden');
-                nextTurn(); // Lanjut ke giliran berikutnya jika ada error
-                return;
-            }
-
-            const selectedButton = document.querySelector('#questionOptions button.bg-blue-100');
-            const selectedIndex = selectedButton ? parseInt(selectedButton.dataset.index) : -1;
             
-            if (selectedIndex === -1) {
-                showNotification('Pilih jawaban terlebih dahulu!', 'wrong');
-                return;
-            }
-
-            const diceElement = document.getElementById('dice');
-            
-            const correct = selectedIndex === gameState.currentQuestion.correct;
-            
-            document.getElementById('questionModal').classList.add('hidden');
-            
-            // LOGIKA: Mengaktifkan kembali tombol dadu setelah menjawab
-            diceElement.style.pointerEvents = 'auto';
-            diceElement.classList.remove('opacity-50', 'cursor-not-allowed');
-            
-            // Set currentQuestion kembali ke null setelah selesai
-            gameState.currentQuestion = null; 
-
-            if (correct) {
-                const player = gameState.players[gameState.currentPlayerIndex];
-                player.points += 10;
-                showNotification(`Jawaban benar! ${player.name} dapat +10 poin! Lempar dadu lagi!`, 'correct');
-                updatePlayerStatus();
-                return; // Don't change turn, player rolls again
-            } else {
-                const player = gameState.players[gameState.currentPlayerIndex];
-                player.points = Math.max(0, player.points - 2);
-                showNotification(`Jawaban salah! ${player.name} dikurangi -2 poin. Giliran selanjutnya.`, 'wrong');
-                updatePlayerStatus();
-            }
-            
-            nextTurn();
-        }
-
-        // Next turn
-        function nextTurn() {
-            gameState.currentPlayerIndex = (gameState.currentPlayerIndex + 1) % gameState.players.length;
-            updateCurrentPlayer();
-        }
-
-        // Update current player display
-        function updateCurrentPlayer() {
-            const player = gameState.players[gameState.currentPlayerIndex];
-            document.getElementById('currentPlayer').textContent = player.name;
-        }
-
-        // Update player status
-        function updatePlayerStatus() {
-            const statusContainer = document.getElementById('playerStatus');
-            statusContainer.innerHTML = '';
-            
-            gameState.players.forEach((player, index) => {
-                const playerDiv = document.createElement('div');
-                playerDiv.className = `flex items-center justify-between p-2 rounded-lg ${index === gameState.currentPlayerIndex ? 'bg-blue-100' : 'bg-gray-50'}`;
-                
-                playerDiv.innerHTML = `
-                    <div class="flex items-center space-x-2">
-                        <div class="w-4 h-4 rounded-full" style="background-color: ${player.color}"></div>
-                        <span class="font-medium">${player.name}</span>
-                    </div>
-                    <div class="text-right">
-                        <div class="text-sm font-bold">Kotak ${player.position}</div>
-                        <div class="text-xs text-gray-500">Poin: ${player.points}</div>
-                    </div>
-                `;
-                
-                statusContainer.appendChild(playerDiv);
-            });
-        }
-
-        // Show notification
-        function showNotification(message, type) {
-            const notification = document.getElementById('notification');
-            notification.textContent = message;
-            notification.className = `notification ${type}`;
-            notification.classList.add('show');
+            player.score = Math.max(0, player.score - 3);
+            const correctAnswer = currentQuestion.options[currentQuestion.correct];
+            showFeedback(`⏰ Waktu habis! Jawaban: ${correctAnswer} (-3 poin)`, '#ff6b6b');
             
             setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
+                closeQuestion();
+            }, 2000);
         }
 
-        // Helper function to calculate final score (UPDATED: Min score 10, Max score 100)
-        function calculateFinalScore(rawPoints) {
-            // Konstanta
-            const MAX_RAW_SCORE = 550; // 50 questions * 10 points + 50 bonus = 550
-            const MIN_FINAL_SCORE = 10;
-            const MAX_FINAL_SCORE = 100;
-            const RANGE_FINAL_SCORE = MAX_FINAL_SCORE - MIN_FINAL_SCORE; // 90
-
-            // Pastikan rawPoints tidak negatif
-            const actualRawPoints = Math.max(0, rawPoints);
+        function showFeedback(message, color) {
+            const feedback = document.createElement('div');
+            feedback.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: ${color};
+                color: white;
+                padding: 20px 30px;
+                border-radius: 10px;
+                font-size: 1.2rem;
+                font-weight: bold;
+                z-index: 2000;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            `;
+            feedback.textContent = message;
+            document.body.appendChild(feedback);
             
-            // Rumus Scaling Baru: Score = Min + (Raw / Max_Raw) * Range_Final
-            // Ini akan menskala 0 hingga 550 ke 10 hingga 100
-            let finalScore = MIN_FINAL_SCORE + (actualRawPoints / MAX_RAW_SCORE) * RANGE_FINAL_SCORE;
-
-            // Batasi nilai maksimum di 100 dan bulatkan ke atas
-            finalScore = Math.min(MAX_FINAL_SCORE, Math.ceil(finalScore));
-
-            return finalScore;
+            setTimeout(() => {
+                document.body.removeChild(feedback);
+            }, 2000);
         }
 
-        // Show win modal (UPDATED: Display both players' final scores)
-        function showWinModal(winningPlayerName, winningPlayerPoints, timeOver = false) {
-            const winModalTitle = document.getElementById('winModalTitle');
-            const winnerText = document.getElementById('winnerText');
-            const finalScoresContainer = document.getElementById('finalScores');
-
-            winModalTitle.textContent = "Permainan Selesai!";
-            
-            let message = '';
-            if (timeOver) {
-                message = `${winningPlayerName} adalah pemain dengan poin tertinggi. Waktu permainan sudah habis.`;
-            } else {
-                message = `${winningPlayerName} berhasil mencapai kotak 100!`;
-            }
-            
-            winnerText.textContent = message;
-
-            // Sort players by points (descending) for display
-            const sortedPlayers = [...gameState.players].sort((a, b) => {
-                if (b.points !== a.points) {
-                    return b.points - a.points; // Sort by points
-                }
-                return b.position - a.position; // Tie-breaker: sort by position
-            });
-
-            finalScoresContainer.innerHTML = ''; // Clear previous scores
-
-            sortedPlayers.forEach(player => {
-                const finalScore = calculateFinalScore(player.points);
-                const isWinner = player.name === winningPlayerName && sortedPlayers[0].points === player.points; // Highlight highest score
-
-                const scoreCard = document.createElement('div');
-                scoreCard.className = `score-card ${isWinner ? 'highlight' : ''}`;
-                
-                scoreCard.innerHTML = `
-                    <div class="flex items-center space-x-3">
-                        <div class="w-5 h-5 rounded-full" style="background-color: ${player.color}; border: 2px solid white;"></div>
-                        <span class="font-bold text-gray-800">${player.name} ${isWinner ? ' (Juara)' : ''}</span>
-                    </div>
-                    <div class="text-right">
-                        <div class="text-xl font-extrabold text-blue-600">${finalScore}</div>
-                        <div class="text-xs text-gray-500">(Poin Mentah: ${player.points})</div>
-                    </div>
-                `;
-                finalScoresContainer.appendChild(scoreCard);
-            });
-            
-            document.getElementById('winModal').classList.remove('hidden');
+        function closeQuestion() {
+            clearInterval(questionTimer);
+            questionActive = false;
+            document.getElementById('questionModal').style.display = 'none';
+            gameRunning = true;
+            render();
         }
 
-        // Reset game
-        function resetGame() {
-            document.getElementById('winModal').classList.add('hidden');
-            document.getElementById('gameScreen').classList.add('hidden');
-            document.getElementById('loginScreen').classList.remove('hidden');
+        // Multiple choice questions don't need Enter key support
+
+        function startGame() {
+            // Adjust board size for current screen
+            adjustBoardSize();
             
-            if (gameState.gameTimer) {
-                clearInterval(gameState.gameTimer);
-            }
+            const COLS = Math.floor(BOARD_WIDTH / SEGMENT_SIZE);
+            const ROWS = Math.floor(BOARD_HEIGHT / SEGMENT_SIZE);
             
-            // Reset state
-            gameState = {
-                players: [],
-                currentPlayerIndex: 0,
-                gameStarted: false,
-                gameTimer: null,
-                gameTimeLeft: 600, // Reset ke default 10 menit (600 detik)
-                currentQuestionIndex: 0,
-                currentQuestion: null
+            // Reset game state with adjusted positions
+            player = {
+                snake: [{x: Math.floor(COLS/2), y: Math.floor(ROWS/2)}, 
+                        {x: Math.floor(COLS/2)-1, y: Math.floor(ROWS/2)}, 
+                        {x: Math.floor(COLS/2)-2, y: Math.floor(ROWS/2)}],
+                direction: {x: 1, y: 0},
+                score: 0,
+                color: 'player1-snake'
             };
-            
-            document.getElementById('player1Name').value = '';
-            document.getElementById('player2Name').value = '';
-            document.querySelectorAll('.color-btn-1').forEach(b => b.classList.remove('ring-4', 'ring-blue-300'));
-            document.querySelectorAll('.color-btn-2').forEach(b => b.classList.remove('ring-4', 'ring-green-300'));
-            
-            // Reset default selections
-            document.querySelector('.color-btn-1[data-color="#3b82f6"]').classList.add('ring-4', 'ring-blue-300');
-            document.querySelector('.color-btn-2[data-color="#ef4444"]').classList.add('ring-4', 'ring-green-300');
 
-            // Reset dropdown to default 10 minutes
-            document.getElementById('gameDuration').value = '600'; 
+            // Reset question system
+            questionActive = false;
+            clearInterval(questionTimer);
+            document.getElementById('questionModal').style.display = 'none';
+
+            generateFood();
+            gameRunning = true;
+            gameOver.style.display = 'none';
+
+            render();
+            gameLoop = setInterval(gameStep, 150);
         }
 
-        // Initialize the game
-        initLogin();
+        // Start the game when page loads
+        startGame();
     </script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98dc26dc3435fdc5',t:'MTc2MDMzMDM1Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
